@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.PageTitle}}</title>
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Projects</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="/blog">Blog</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Welcome to My Portfolio</h1>
+        <p>I'm a passionate developer, creating amazing web applications.</p>
+        <a href="#" class="cta-button">View Projects</a>
+    </div>
+</section>
+
+<section class="projects">
+    <h2>My Projects</h2>
+    <div class="project-list">
+        <div class="project-item">
+            <img src="project1.png" alt="Project 1">
+            <h3>Project 1</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div class="project-item">
+            <img src="project2.png" alt="Project 2">
+            <h3>Project 2</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div class="project-item">
+            <img src="project3.png" alt="Project 3">
+            <h3>Project 3</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2023 My Portfolio. All rights reserved.</p>
+</footer>
+</body>
+</html>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    header {
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+    }
+
+    nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav ul li {
+        display: inline;
+        margin-right: 20px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .hero {
+        background-image: url('hero-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-content {
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+
+    .hero p {
+        font-size: 18px;
+        margin-bottom: 40px;
+    }
+
+    .cta-button {
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #333;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .cta-button:hover {
+        background-color: #555;
+    }
+
+    .projects {
+        padding: 40px;
+    }
+
+    .projects h2 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 40px;
+    }
+
+    .project-list {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .project-item {
+        flex: 1;
+        text-align: center;
+        margin: 0 10px;
+    }
+
+    .project-item img {
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .project-item h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .project-item p {
+        font-size: 14px;
+    }
+
+    footer {
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+    }
+
+</style>
