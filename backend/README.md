@@ -28,3 +28,9 @@ go get github.com/gofiber/fiber/v2
 ```
 docker run --name mongoPortfolio -p 27017:27017 -d mongo:latest
 ```
+
+## TODO
+- allow uploading files
+- implement a template cache?
+- make a nice header
+- make a nice footer

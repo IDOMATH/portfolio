@@ -51,11 +51,13 @@ func main() {
 	app.Post("/blog", blogHandler.HandlePostBlog)
 	app.Get("/blog/:id", blogHandler.HandleGetBlogById)
 
+	app.Get("/resume", handlers.HandleGetResume)
+
 	app.Listen(portNumber)
 }
 
 func HandleHome(c *fiber.Ctx) error {
-	return c.Render("home", fiber.Map{"PageTitle": "Home"})
+	return c.Render("home", fiber.Map{"PageTitle": "Home"}, "layouts/base")
 }
 
 func HandleGetContactForm(c *fiber.Ctx) error {

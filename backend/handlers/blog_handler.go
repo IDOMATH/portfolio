@@ -27,7 +27,7 @@ func (h *BlogHandler) HandleGetBlogs(c *fiber.Ctx) error {
 	return c.Render("all-blogs", fiber.Map{
 		"PageTitle": "All Blogs",
 		"BlogPosts": blogCards,
-	})
+	}, "layouts/base")
 }
 
 func (h *BlogHandler) HandleGetBlogById(c *fiber.Ctx) error {
