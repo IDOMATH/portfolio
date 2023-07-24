@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.PageTitle}}</title>
+</head>
+<body>
+{{if .Success}}
+    <h1>Successfully Posted!</h1>
+{{else}}
+
+    <p>{{ .ContactDetails.Email }}</p>
+    <p>{{ .ContactDetails.Subject }}</p>
+    <p>{{ .ContactDetails.Message }}</p>
+
+{{end}}
+</body>
+</html>
