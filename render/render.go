@@ -4,38 +4,37 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/IDOMATH/portfolio/config"
+	"github.com/IDOMATH/portfolio/types"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 )
 
-var pathToTemplates = "./templates"
-var app *config.AppConfig
+const templatesLocation = "./templates"
+const layoutsLocation = templatesLocation + "/layouts"
 
-func NewRenderer(a *config.AppConfig) {
-	app = a
-}
-
-func Template(w http.ResponseWriter, r *http.Request, tmpl string) error {
+// Template renders html templates for pages
+func Template(w http.ResponseWriter, r *http.Request, tmpl string, data *types.TemplateData) error {
 	var tc map[string]*template.Template
-	if app.UseCache {
-		// Get the template cache from app config
-		tc = app.TemplateCache
-	} else {
-		// This is just for testing, so we rebuild the cache ever request
-		tc, _ = CreateTemplateCache()
+
+	// TODO: store template cache in app for reuse.
+
+	// This is for testing purposes
+	tc, err := CreateTemplateCache()
+	if err != nil {
+		return err
 	}
 
-	template, ok := tc[tmpl]
+	// Get requested template from cache
+	t, ok := tc[tmpl]
 	if !ok {
 		return errors.New("can't get template from cache")
 	}
 
 	buf := new(bytes.Buffer)
 
-	err := template.Execute(buf, nil)
+	err = t.Execute(buf, data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,40 +42,44 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string) error {
 	// Render the template
 	_, err = buf.WriteTo(w)
 	if err != nil {
-		fmt.Println("error writing template to browser")
+		fmt.Println("Error writing template to browser", err)
 		return err
 	}
 
 	return nil
 }
 
+// CreateTemplateCache creates a template cache as a map
 func CreateTemplateCache() (map[string]*template.Template, error) {
-	cache := map[string]*template.Template{}
 
-	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates))
+	myCache := map[string]*template.Template{}
+
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.go.html", templatesLocation))
 	if err != nil {
-		return cache, err
+		return myCache, err
 	}
 
 	for _, page := range pages {
 		name := filepath.Base(page)
 		ts, err := template.New(name).ParseFiles(page)
 		if err != nil {
-			return cache, err
+			return myCache, err
 		}
 
-		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.go.html", layoutsLocation))
 		if err != nil {
-			return cache, err
+			return myCache, err
 		}
 
 		if len(matches) > 0 {
-			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.go.html", layoutsLocation))
 			if err != nil {
-				return cache, err
+				return myCache, err
 			}
 		}
-		cache[name] = ts
+
+		myCache[name] = ts
 	}
-	return cache, nil
+
+	return myCache, nil
 }
