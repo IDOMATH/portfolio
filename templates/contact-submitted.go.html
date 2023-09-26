@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.PageTitle}}</title>
+</head>
+<body>
+{{if index .BoolMap "submitted_successfully"}}
+    {{$details := index .ObjectMap "contact_details"}}
+    <p>{{ $details.Email }}</p>
+    <p>{{ $details.Subject }}</p>
+    <p>{{ $details.Message }}</p>
+{{else}}
+    <p>Could not send email</p>
+{{end}}
+</body>
+</html>
