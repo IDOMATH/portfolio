@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/gofor-little/env"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -45,18 +46,16 @@ func main() {
 	//app := fiber.New(config)
 
 	//app.Get("/", HandleHome)
-	http.HandleFunc("/", HandleHome)
+	http.HandleFunc("/", handlers.HandleHome)
 
 	http.HandleFunc("/contact", handlers.HandleContact)
-	//app.Get("/contact", HandleGetContactForm)
-	//app.Post("/contact", HandlePostContactForm)
 	//
 	//app.Get("/blog", blogHandler.HandleGetBlogs)
 	//app.Post("/blog", blogHandler.HandlePostBlog)
 	//app.Get("/blog/:id", blogHandler.HandleGetBlogById)
 	//
 	//app.Get("/pic", handleGetPic)
-	//app.Post("/pic", HandleFileUpload)
+	http.HandleFunc("/pic", HandlePic)
 	//
 	http.HandleFunc("/resume", handlers.HandleGetResume)
 
@@ -72,20 +71,47 @@ func WriteFile(fileName string, file []byte) error {
 	return os.WriteFile(fmt.Sprintf("./uploads/%s", fileName), file, 0644)
 }
 
-func HandleHome(w http.ResponseWriter, r *http.Request) {
-	err := render.Template(w, r, "home.go.html",
-		&types.TemplateData{PageTitle: "Home"})
-	if err != nil {
-		util.WriteError(w, http.StatusInternalServerError, err)
+func HandlePic(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		err := render.Template(w, r, "upload-pic.go.html",
+			&types.TemplateData{PageTitle: "Pic"})
+		if err != nil {
+			util.WriteError(w, http.StatusInternalServerError, err)
+		}
+	case "POST":
+		uploadFile(w, r)
 	}
 }
 
-// TODO: Finish handling file uploads
-func HandleFileUpload(c *fiber.Ctx) error {
-	form, err := c.MultipartForm()
+// TODO: Make this insert the file location into the DB
+func uploadFile(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(10 << 20)
+
+	file, handler, err := r.FormFile("mediaFile")
 	if err != nil {
-		return err
+		fmt.Println("Error retrieving file")
+		fmt.Println(err)
+		return
 	}
-	fmt.Println(form.File["file"])
-	return nil
+
+	defer file.Close()
+	fmt.Printf("Uploaded file: %+v\n", handler.Filename)
+	fmt.Printf("File size: %+v\n", handler.Size)
+	fmt.Printf("MIME Header: %+v\n", handler.Header)
+
+	// Create file
+	dst, err := os.Create(fmt.Sprintf("./uploads/%s", handler.Filename))
+	defer dst.Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Copy uploaded file to the created file on filesystem
+	if _, err := io.Copy(dst, file); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(w, "Successfully uploaded file\n")
 }
