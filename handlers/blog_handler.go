@@ -1,10 +1,13 @@
 package handlers
 
 import (
-	"fmt"
+	"context"
 	"github.com/IDOMATH/portfolio/db"
+	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
+	"github.com/IDOMATH/portfolio/util"
 	"github.com/gofiber/fiber/v2"
+	"net/http"
 	"time"
 )
 
@@ -18,26 +21,37 @@ func NewBlogHandler(blogStore db.BlogStore) *BlogHandler {
 	}
 }
 
-func (h *BlogHandler) HandleGetBlogs(c *fiber.Ctx) error {
+func (h *BlogHandler) HandleGetBlogs(ctx context.Context) http.HandlerFunc {
 	//util.EnableCors(c)
-	blogCards, err := h.blogStore.GetBlogCards(c.Context())
+	c, cancelFunc := context.WithCancel(ctx)
+	defer cancelFunc()
+
+	blogCards, err := h.blogStore.GetBlogCards(c)
+	objects := make(map[string]interface{})
+	objects["blog_posts"] = blogCards
+
 	if err != nil {
-		return err
+		return func(w http.ResponseWriter, r *http.Request) {
+			util.WriteError(w, http.StatusInternalServerError, err)
+		}
 	}
-	return c.Render("all-blogs", fiber.Map{
-		"PageTitle": "All Blogs",
-		"BlogPosts": blogCards,
-	}, "layouts/base")
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		render.Template(w, r, "all-blogs.go.html", &types.TemplateData{
+			PageTitle: "All Blogs",
+			ObjectMap: objects,
+		})
+	}
 }
 
-func (h *BlogHandler) HandleGetBlogById(c *fiber.Ctx) error {
-	fmt.Println(c.Params("id"))
-	blog, err := h.blogStore.GetBlogById(c.Context(), c.Params("id"))
-	if err != nil {
-		return err
-	}
-	return c.JSON(blog)
-}
+//func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request, ctx context.Context) error {
+//	fmt.Println(ctx.Params("id"))
+//	blog, err := h.blogStore.GetBlogById(c.Context(), c.Params("id"))
+//	if err != nil {
+//		return err
+//	}
+//	return c.JSON(blog)
+//}
 
 func (h *BlogHandler) HandlePostBlog(c *fiber.Ctx) error {
 	//pic, err := c.FormFile("thumbnail")

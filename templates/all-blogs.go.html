@@ -1,5 +1,6 @@
 <div class="row">
-    {{range .BlogPosts}}
+    {{$blogs := index .ObjectMap "blog_posts"}}
+    {{range $blogs}}
         <div class="column">
             <div class="card">
                 <div class="container">

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/handlers"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
@@ -9,6 +11,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/gofor-little/env"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"io"
 	"log"
 	"net/http"
@@ -37,11 +41,11 @@ func main() {
 	}
 
 	// Set config details based whether the values are in the .env
-	//client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dbUri))
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dbUri))
+	if err != nil {
+		log.Fatal(err)
+	}
+	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
 
 	//app := fiber.New(config)
 
@@ -50,7 +54,7 @@ func main() {
 
 	http.HandleFunc("/contact", handlers.HandleContact)
 	//
-	//app.Get("/blog", blogHandler.HandleGetBlogs)
+	http.HandleFunc("/blog", blogHandler.HandleGetBlogs(context.Background()))
 	//app.Post("/blog", blogHandler.HandlePostBlog)
 	//app.Get("/blog/:id", blogHandler.HandleGetBlogById)
 	//
@@ -65,10 +69,6 @@ func main() {
 
 func handleGetPic(c *fiber.Ctx) error {
 	return c.Render("upload-pic", fiber.Map{"PageTitle": "Upload"}, "layouts/base")
-}
-
-func WriteFile(fileName string, file []byte) error {
-	return os.WriteFile(fmt.Sprintf("./uploads/%s", fileName), file, 0644)
 }
 
 func HandlePic(w http.ResponseWriter, r *http.Request) {
