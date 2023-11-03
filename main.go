@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/handlers"
+	"github.com/IDOMATH/portfolio/middleware"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
@@ -50,7 +51,7 @@ func main() {
 	//app := fiber.New(config)
 
 	//app.Get("/", HandleHome)
-	http.HandleFunc("/", handlers.HandleHome)
+	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
 
 	http.HandleFunc("/contact", handlers.HandleContact)
 	//
