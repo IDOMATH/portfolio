@@ -22,4 +22,5 @@ type BlogCard struct {
 	Author      string             `bson:"author" json:"author"`
 	PublishedAt time.Time          `bson:"publishedAt" json:"publishedAt"`
 	ImageName   string             `bson:"imageName" json:"imageName"`
+	secretField string
 }

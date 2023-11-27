@@ -11,10 +11,6 @@ import (
 
 const blogCollection = "blogs"
 
-type Dropper interface {
-	Drop(context.Context) error
-}
-
 type BlogStore interface {
 	Dropper
 
