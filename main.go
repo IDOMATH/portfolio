@@ -69,7 +69,7 @@ func main() {
 }
 
 func handleGetPic(c *fiber.Ctx) error {
-	types.BlogCard{secretF}
+	//types.BlogCard{secretF}
 	return c.Render("upload-pic", fiber.Map{"PageTitle": "Upload"}, "layouts/base")
 }
 
