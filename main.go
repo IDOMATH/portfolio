@@ -48,7 +48,8 @@ func main() {
 	}
 	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
 
-	//app := fiber.New(config)
+	//connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
+	//db, err := driver.ConnectSQL(connectionString)
 
 	//app.Get("/", HandleHome)
 	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
