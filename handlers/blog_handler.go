@@ -22,7 +22,6 @@ func NewBlogHandler(blogStore db.BlogStore) *BlogHandler {
 }
 
 func (h *BlogHandler) HandleGetBlogs(ctx context.Context) http.HandlerFunc {
-	//util.EnableCors(c)
 	c, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 

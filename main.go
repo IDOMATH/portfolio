@@ -49,7 +49,7 @@ func main() {
 	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
 
 	//connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
-	//db, err := driver.ConnectSQL(connectionString)
+	//db, err := db.ConnectSQL(connectionString)
 
 	//app.Get("/", HandleHome)
 	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
