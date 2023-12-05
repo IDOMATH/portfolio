@@ -21,6 +21,10 @@ func NewUserHandler(userStore db.UserStore) *UserHandler {
 }
 
 func (h *UserHandler) HandlePostUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		// TODO: write a JSON error and return a status code
+		return
+	}
 	err := r.ParseForm()
 	if err != nil {
 		// TODO: Render a template with an error message

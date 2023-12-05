@@ -47,6 +47,7 @@ func main() {
 		log.Fatal(err)
 	}
 	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
+	userHandler := handlers.NewUserHandler(db.NewUserStore(client, dbName))
 
 	//connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
 	//db, err := db.ConnectSQL(connectionString)
@@ -64,6 +65,8 @@ func main() {
 	http.HandleFunc("/pic", HandlePic)
 	//
 	http.HandleFunc("/resume", handlers.HandleGetResume)
+
+	http.HandleFunc("/user", userHandler.HandlePostUser)
 
 	//app.Listen(portNumber)
 	http.ListenAndServe(portNumber, nil)
