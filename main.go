@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/handlers"
@@ -46,11 +47,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var postgresDb *sql.DB
+	//connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
+	//postgresDb, err := db.ConnectSQL(connectionString)
+
 	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
 	userHandler := handlers.NewUserHandler(db.NewUserStore(client, dbName))
-
-	//connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
-	//db, err := db.ConnectSQL(connectionString)
+	guestbookHandler := handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb))
 
 	//app.Get("/", HandleHome)
 	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
@@ -67,6 +70,8 @@ func main() {
 	http.HandleFunc("/resume", handlers.HandleGetResume)
 
 	http.HandleFunc("/user", userHandler.HandlePostUser)
+
+	http.HandleFunc("/guestbook", guestbookHandler.HandleGetGuestbookSignatures())
 
 	//app.Listen(portNumber)
 	http.ListenAndServe(portNumber, nil)
