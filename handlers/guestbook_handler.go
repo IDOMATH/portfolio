@@ -18,7 +18,7 @@ func NewGuestbookHandler(guestbookStore db.PostgresGuestbookStore) *GuestbookHan
 	}
 }
 
-func (h *GuestbookHandler) HandleGetGuestbookSignatures() http.HandlerFunc {
+func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures() http.HandlerFunc {
 
 	signatures, err := h.guestbookStore.GetApprovedGuestbookSignatures()
 	objects := make(map[string]interface{})
@@ -35,5 +35,17 @@ func (h *GuestbookHandler) HandleGetGuestbookSignatures() http.HandlerFunc {
 			PageTitle: "Guestbook",
 			ObjectMap: objects,
 		})
+	}
+}
+
+func (h *GuestbookHandler) HandlePostGuestbookSignature() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+	}
+}
+
+func (h *GuestbookHandler) HandleGetAllGuestbookSignature() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
 	}
 }
