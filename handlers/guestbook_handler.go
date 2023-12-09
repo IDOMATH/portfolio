@@ -57,6 +57,9 @@ func (h *GuestbookHandler) HandleGetAllGuestbookSignature() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		render.Template(w, r, "guestbook_admin.go.html", &types.TemplateData{
+			PageTitle: "Guestbook Admin",
+			ObjectMap: objects,
+		})
 	}
 }
