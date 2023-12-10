@@ -39,8 +39,12 @@ func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures() http.HandlerFu
 }
 
 func (h *GuestbookHandler) HandlePostGuestbookSignature() http.HandlerFunc {
+	// TODO: handle a GET that presents a form and a POST that executes a DB insert followed by a redirect?
+	// then a success page.
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		render.Template(w, r, "guestbook-signed-successfully.go.html", &types.TemplateData{
+			PageTitle: "Guestbook Signed",
+		})
 	}
 }
 
@@ -57,7 +61,7 @@ func (h *GuestbookHandler) HandleGetAllGuestbookSignature() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		render.Template(w, r, "guestbook_admin.go.html", &types.TemplateData{
+		render.Template(w, r, "guestbook-admin.go.html", &types.TemplateData{
 			PageTitle: "Guestbook Admin",
 			ObjectMap: objects,
 		})
