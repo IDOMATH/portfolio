@@ -6,6 +6,7 @@ import (
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
 	"net/http"
+	"time"
 )
 
 type GuestbookHandler struct {
@@ -38,10 +39,26 @@ func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures() http.HandlerFu
 	}
 }
 
-func (h *GuestbookHandler) HandlePostGuestbookSignature() http.HandlerFunc {
-	// TODO: handle a GET that presents a form and a POST that executes a DB insert followed by a redirect?
-	// then a success page.
-	return func(w http.ResponseWriter, r *http.Request) {
+func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		render.Template(w, r, "guestbook-form.go.html", &types.TemplateData{
+			PageTitle: "Sign Guestbook",
+		})
+	}
+	if r.Method == "POST" {
+		name := r.PostForm.Get("name")
+
+		signature := types.GuestbookSignature{
+			Name:       name,
+			IsApproved: false,
+			CreatedAt:  time.Now(),
+		}
+		_, err := h.guestbookStore.InsertGuestbookSignature(signature)
+		if err != nil {
+			// TODO: maybe some sort of pop up that says there was an error signing the guestbook
+			return
+		}
+
 		render.Template(w, r, "guestbook-signed-successfully.go.html", &types.TemplateData{
 			PageTitle: "Guestbook Signed",
 		})
