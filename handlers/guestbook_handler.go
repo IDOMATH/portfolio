@@ -55,7 +55,7 @@ func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r
 		}
 		_, err := h.guestbookStore.InsertGuestbookSignature(signature)
 		if err != nil {
-			// TODO: maybe some sort of pop up that says there was an error signing the guestbook
+			util.WriteError(w, http.StatusInternalServerError, err)
 			return
 		}
 
