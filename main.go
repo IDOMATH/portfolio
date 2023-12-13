@@ -54,6 +54,7 @@ func main() {
 	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
 	userHandler := handlers.NewUserHandler(db.NewUserStore(client, dbName))
 	guestbookHandler := handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb))
+	fitnessHandler := handlers.NewFintessHandler(*db.NewPostgresFitnessStore(postgresDb))
 
 	//app.Get("/", HandleHome)
 	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
@@ -71,7 +72,9 @@ func main() {
 
 	http.HandleFunc("/user", userHandler.HandlePostUser)
 
-	http.HandleFunc("/guestbook", guestbookHandler.HandleGetGuestbookSignatures())
+	http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures())
+
+	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
 
 	//app.Listen(portNumber)
 	http.ListenAndServe(portNumber, nil)
