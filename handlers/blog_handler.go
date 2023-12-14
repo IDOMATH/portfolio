@@ -6,7 +6,6 @@ import (
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
-	"github.com/gofiber/fiber/v2"
 	"net/http"
 	"time"
 )
@@ -52,21 +51,29 @@ func (h *BlogHandler) HandleGetBlogs(ctx context.Context) http.HandlerFunc {
 //	return c.JSON(blog)
 //}
 
-func (h *BlogHandler) HandlePostBlog(c *fiber.Ctx) error {
+func (h *BlogHandler) HandlePostBlog(w http.ResponseWriter, r *http.Request) {
 	//pic, err := c.FormFile("thumbnail")
 	//if err != nil {
 	//	return err
 	//}
 	// TODO: store the uploaded file somewhere.
 	var blog types.BlogPost
-	if err := c.BodyParser(&blog); err != nil {
-		return err
-	}
+
+	title := r.PostForm.Get("title")
+	// TODO: get the author from the logged in user.
+	body := r.PostForm.Get("body")
+	imageName := r.PostForm.Get("image")
+
+	blog.Title = title
+	blog.Body = body
+	blog.ImageName = imageName
 	blog.PublishedAt = time.Now()
 	//blog.ImageName :=
-	insertedBlog, err := h.blogStore.InsertBlogPost(c.Context(), &blog)
+	insertedBlog, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
 	if err != nil {
-		return err
+		// TODO: make this return a handlerfunc
+		util.WriteError(w, http.StatusInternalServerError, err)
 	}
-	return c.JSON(insertedBlog)
+
+	w.Write([]byte(insertedBlog.Title))
 }

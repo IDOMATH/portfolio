@@ -63,6 +63,7 @@ func main() {
 	//
 	http.HandleFunc("/blog", blogHandler.HandleGetBlogs(context.Background()))
 	//app.Post("/blog", blogHandler.HandlePostBlog)
+	http.HandleFunc("/new-blog", blogHandler.HandlePostBlog)
 	//app.Get("/blog/:id", blogHandler.HandleGetBlogById)
 	//
 	//app.Get("/pic", handleGetPic)
