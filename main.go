@@ -62,9 +62,10 @@ func main() {
 	http.HandleFunc("/contact", handlers.HandleContact)
 	//
 	http.HandleFunc("/blog", blogHandler.HandleGetBlogs(context.Background()))
-	//app.Post("/blog", blogHandler.HandlePostBlog)
+
 	http.HandleFunc("/new-blog", blogHandler.HandlePostBlog)
-	//app.Get("/blog/:id", blogHandler.HandleGetBlogById)
+	// TODO: add pattern matching for URLs
+	//http.HandleFunc("/blog/:id", blogHandler.HandleGetBlogById)
 	//
 	//app.Get("/pic", handleGetPic)
 	http.HandleFunc("/pic", HandlePic)

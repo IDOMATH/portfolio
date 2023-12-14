@@ -7,6 +7,7 @@ import (
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -42,14 +43,17 @@ func (h *BlogHandler) HandleGetBlogs(ctx context.Context) http.HandlerFunc {
 	}
 }
 
-//func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request, ctx context.Context) error {
-//	fmt.Println(ctx.Params("id"))
-//	blog, err := h.blogStore.GetBlogById(c.Context(), c.Params("id"))
-//	if err != nil {
-//		return err
-//	}
-//	return c.JSON(blog)
-//}
+func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) {
+	url := strings.Split(r.URL.Path, "/")
+	id := url[1]
+	blog, err := h.blogStore.GetBlogById(context.Background(), id)
+	if err != nil {
+		// TODO: make this return a handlerfunc
+		util.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	w.Write([]byte(blog.Title))
+}
 
 func (h *BlogHandler) HandlePostBlog(w http.ResponseWriter, r *http.Request) {
 	//pic, err := c.FormFile("thumbnail")
