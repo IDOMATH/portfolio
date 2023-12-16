@@ -78,7 +78,6 @@ func main() {
 
 	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
 
-	//app.Listen(portNumber)
 	http.ListenAndServe(portNumber, nil)
 }
 
