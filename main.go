@@ -77,6 +77,7 @@ func main() {
 	http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures())
 
 	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
+	http.HandleFunc("/fitness-form", fitnessHandler.HandlePostFitness)
 
 	http.ListenAndServe(portNumber, nil)
 }
