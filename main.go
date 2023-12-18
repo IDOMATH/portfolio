@@ -56,20 +56,18 @@ func main() {
 	guestbookHandler := handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb))
 	fitnessHandler := handlers.NewFintessHandler(*db.NewPostgresFitnessStore(postgresDb))
 
-	//app.Get("/", HandleHome)
 	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
 
 	http.HandleFunc("/contact", handlers.HandleContact)
-	//
+
 	http.HandleFunc("/blog", blogHandler.HandleGetBlogs(context.Background()))
 
 	http.HandleFunc("/new-blog", blogHandler.HandlePostBlog)
 	// TODO: add pattern matching for URLs
 	//http.HandleFunc("/blog/:id", blogHandler.HandleGetBlogById)
-	//
-	//app.Get("/pic", handleGetPic)
+
 	http.HandleFunc("/pic", HandlePic)
-	//
+
 	http.HandleFunc("/resume", handlers.HandleGetResume)
 
 	http.HandleFunc("/user", userHandler.HandlePostUser)
@@ -80,11 +78,6 @@ func main() {
 	http.HandleFunc("/fitness-form", fitnessHandler.HandlePostFitness)
 
 	http.ListenAndServe(portNumber, nil)
-}
-
-func handleGetPic(c *fiber.Ctx) error {
-	//types.BlogCard{secretF}
-	return c.Render("upload-pic", fiber.Map{"PageTitle": "Upload"}, "layouts/base")
 }
 
 func HandlePic(w http.ResponseWriter, r *http.Request) {

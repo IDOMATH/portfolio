@@ -56,10 +56,6 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *BlogHandler) HandlePostBlog(w http.ResponseWriter, r *http.Request) {
-	//pic, err := c.FormFile("thumbnail")
-	//if err != nil {
-	//	return err
-	//}
 	// TODO: store the uploaded file somewhere.
 	var blog types.BlogPost
 
@@ -72,7 +68,6 @@ func (h *BlogHandler) HandlePostBlog(w http.ResponseWriter, r *http.Request) {
 	blog.Body = body
 	blog.ImageName = imageName
 	blog.PublishedAt = time.Now()
-	//blog.ImageName :=
 	insertedBlog, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
 	if err != nil {
 		// TODO: make this return a handlerfunc
