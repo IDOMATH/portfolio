@@ -21,7 +21,16 @@ func NewBlogHandler(blogStore db.BlogStore) *BlogHandler {
 	}
 }
 
-func (h *BlogHandler) HandleGetBlogs(ctx context.Context) http.HandlerFunc {
+func (h *BlogHandler) HandleBlog(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		h.GetAllBlogs(w, r, context.Background())
+	}
+	if r.Method == "POST" {
+		h.InsetBlog(w, r)
+	}
+}
+
+func (h *BlogHandler) GetAllBlogs(w http.ResponseWriter, r *http.Request, ctx context.Context) {
 	c, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 
@@ -30,17 +39,13 @@ func (h *BlogHandler) HandleGetBlogs(ctx context.Context) http.HandlerFunc {
 	objects["blog_posts"] = blogCards
 
 	if err != nil {
-		return func(w http.ResponseWriter, r *http.Request) {
-			util.WriteError(w, http.StatusInternalServerError, err)
-		}
+		util.WriteError(w, http.StatusInternalServerError, err)
 	}
+	render.Template(w, r, "all-blogs.go.html", &types.TemplateData{
+		PageTitle: "All Blogs",
+		ObjectMap: objects,
+	})
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		render.Template(w, r, "all-blogs.go.html", &types.TemplateData{
-			PageTitle: "All Blogs",
-			ObjectMap: objects,
-		})
-	}
 }
 
 func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +60,7 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 	w.Write([]byte(blog.Title))
 }
 
-func (h *BlogHandler) HandlePostBlog(w http.ResponseWriter, r *http.Request) {
+func (h *BlogHandler) InsetBlog(w http.ResponseWriter, r *http.Request) {
 	// TODO: store the uploaded file somewhere.
 	var blog types.BlogPost
 
