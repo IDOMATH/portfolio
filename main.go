@@ -60,7 +60,8 @@ func main() {
 
 	http.HandleFunc("/contact", handlers.HandleContact)
 
-	http.HandleFunc("/blog", blogHandler.HandleBlog)
+	http.HandleFunc("/blog", blogHandler.HandleBlog(context.Background()))
+	http.HandleFunc("/new-blog", blogHandler.HandleNewBlog)
 	// TODO: add pattern matching for URLs
 	//http.HandleFunc("/blog/:id", blogHandler.HandleGetBlogById)
 
