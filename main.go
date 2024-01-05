@@ -48,6 +48,11 @@ func main() {
 		log.Fatal(err)
 	}
 	var postgresDb *sql.DB
+	//dbHost := "localhost"
+	//dbPort := "5432"
+	//dbName := "portfolio"
+	//dbUser := "postgres"
+	//dbPass, *dbSSL
 	//connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
 	//postgresDb, err := db.ConnectSQL(connectionString)
 
