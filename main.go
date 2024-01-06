@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/handlers"
@@ -47,19 +46,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var postgresDb *sql.DB
-	//dbHost := "localhost"
-	//dbPort := "5432"
-	//dbName := "portfolio"
-	//dbUser := "postgres"
-	//dbPass, *dbSSL
-	//connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
-	//postgresDb, err := db.ConnectSQL(connectionString)
+	dbHost := "localhost"
+	dbPort := "5432"
+	dbName := "portfolio"
+	dbUser := "postgres"
+	dbPass := "postgres"
+	dbSSL := "disable"
+	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", dbHost, dbPort, dbName, dbUser, dbPass, dbSSL)
+	postgresDb, err := db.ConnectSQL(connectionString)
 
 	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
 	userHandler := handlers.NewUserHandler(db.NewUserStore(client, dbName))
-	guestbookHandler := handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb))
-	fitnessHandler := handlers.NewFintessHandler(*db.NewPostgresFitnessStore(postgresDb))
+	guestbookHandler := handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
+	fitnessHandler := handlers.NewFintessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 
 	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
 
