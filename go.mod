@@ -6,6 +6,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.44.0
 	github.com/gofiber/template/html/v2 v2.0.4
 	github.com/gofor-little/env v1.0.14
+	github.com/lib/pq v1.10.9
 	go.mongodb.org/mongo-driver v1.11.4
 	golang.org/x/crypto v0.15.0
 )

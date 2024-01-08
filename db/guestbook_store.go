@@ -75,7 +75,7 @@ func (s *PostgresGuestbookStore) GetApprovedGuestbookSignatures() ([]types.Guest
 	var signatures []types.GuestbookSignature
 
 	query := `
-		select id, name, email, created_at
+		select id, name, created_at
 		from guestbook
 		where is_approved = true`
 

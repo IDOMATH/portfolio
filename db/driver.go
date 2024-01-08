@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	_ "github.com/lib/pq"
 	"time"
 )
 
@@ -16,7 +17,7 @@ const maxIdleDbConn = 5
 const maxDbLifetime = 5 * time.Minute
 
 func NewDatabase(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("pgx", dsn)
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}
