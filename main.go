@@ -80,6 +80,7 @@ func main() {
 	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
 	http.HandleFunc("/fitness-form", fitnessHandler.HandlePostFitness)
 
+	fmt.Println("Starting server on port ", portNumber)
 	http.ListenAndServe(portNumber, nil)
 }
 
