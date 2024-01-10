@@ -41,6 +41,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fmt.Println("Connecting to mongo")
 	// Set config details based whether the values are in the .env
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dbUri))
 	if err != nil {
@@ -53,7 +54,12 @@ func main() {
 	dbPass := "postgres"
 	dbSSL := "disable"
 	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", dbHost, dbPort, dbName, dbUser, dbPass, dbSSL)
+	fmt.Println("Connecting to Postgres")
 	postgresDb, err := db.ConnectSQL(connectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Connected to Postgres")
 
 	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
 	userHandler := handlers.NewUserHandler(db.NewUserStore(client, dbName))
@@ -63,7 +69,8 @@ func main() {
 	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
 
 	http.HandleFunc("/contact", handlers.HandleContact)
-
+	fmt.Println("before handleblog")
+	//TODO: Figure out why this takes so long when starting up server
 	http.HandleFunc("/blog", blogHandler.HandleBlog(context.Background()))
 	http.HandleFunc("/new-blog", blogHandler.HandleNewBlog)
 	// TODO: add pattern matching for URLs
@@ -74,7 +81,7 @@ func main() {
 	http.HandleFunc("/resume", handlers.HandleGetResume)
 
 	http.HandleFunc("/user", userHandler.HandlePostUser)
-
+	fmt.Println("Before get approved guestbook")
 	http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures())
 
 	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
