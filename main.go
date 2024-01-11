@@ -69,9 +69,8 @@ func main() {
 	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
 
 	http.HandleFunc("/contact", handlers.HandleContact)
-	fmt.Println("before handleblog")
-	//TODO: Figure out why this takes so long when starting up server
-	http.HandleFunc("/blog", blogHandler.HandleBlog(context.Background()))
+
+	http.HandleFunc("/blog", blogHandler.HandleBlog)
 	http.HandleFunc("/new-blog", blogHandler.HandleNewBlog)
 	// TODO: add pattern matching for URLs
 	//http.HandleFunc("/blog/:id", blogHandler.HandleGetBlogById)

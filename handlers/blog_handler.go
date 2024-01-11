@@ -21,8 +21,8 @@ func NewBlogHandler(blogStore db.BlogStore) *BlogHandler {
 	}
 }
 
-func (h *BlogHandler) HandleBlog(ctx context.Context) http.HandlerFunc {
-	c, cancelFunc := context.WithCancel(ctx)
+func (h *BlogHandler) HandleBlog(w http.ResponseWriter, r *http.Request) {
+	c, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
 
 	blogCards, err := h.blogStore.GetBlogCards(c)
@@ -30,11 +30,10 @@ func (h *BlogHandler) HandleBlog(ctx context.Context) http.HandlerFunc {
 	objects["blog_posts"] = blogCards
 
 	if err != nil {
-		return func(w http.ResponseWriter, r *http.Request) {
-			util.WriteError(w, http.StatusInternalServerError, err)
-		}
-	}
-	return func(w http.ResponseWriter, r *http.Request) {
+		util.WriteError(w, http.StatusInternalServerError, err)
+
+	} else {
+
 		render.Template(w, r, "all-blogs.go.html", &types.TemplateData{
 			PageTitle: "All Blogs",
 			ObjectMap: objects,
