@@ -22,7 +22,7 @@ import (
 
 const portNumber = ":8080"
 const dbUri = "mongodb://localhost:27017"
-const dbName = "portfolio"
+const mongoDbName = "portfolio"
 const blogCollection = "blog"
 const templatesLocation = "./templates"
 
@@ -61,8 +61,8 @@ func main() {
 	}
 	fmt.Println("Connected to Postgres")
 
-	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, dbName))
-	userHandler := handlers.NewUserHandler(db.NewUserStore(client, dbName))
+	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
+	userHandler := handlers.NewUserHandler(db.NewUserStore(client, mongoDbName))
 	guestbookHandler := handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
 	fitnessHandler := handlers.NewFintessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 
