@@ -86,8 +86,14 @@ func main() {
 	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
 	http.HandleFunc("/fitness-form", fitnessHandler.HandlePostFitness)
 
+	http.HandleFunc("/clicked", handleClicked)
+
 	fmt.Println("Starting server on port ", portNumber)
 	http.ListenAndServe(portNumber, nil)
+}
+
+func handleClicked(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "clicked.go.html", &types.TemplateData{})
 }
 
 func HandlePic(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,18 @@
+{{template "base" .}}
+
+{{define "content"}}
+<div class="row">
+    {{$signatures := index .ObjectMap "signatures"}}
+    {{range $signatures}}
+        <div class="column">
+
+            <p>{{.Name}}</p>
+        </div>
+    {{end}}
+</div>
+
+<button hx-post="/clicked" hx-swap="outerHTML">
+    Click Me
+</button>
+
+{{end}}
