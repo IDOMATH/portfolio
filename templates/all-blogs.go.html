@@ -1,3 +1,6 @@
+{{template "base" .}}
+
+{{define "content"}}
 <div class="row">
     {{$blogs := index .ObjectMap "blog_posts"}}
     {{range $blogs}}
@@ -12,6 +15,7 @@
         </div>
     {{end}}
 </div>
+{{end}}
 
 <style>
     * {
