@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
@@ -40,13 +41,10 @@ func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures() http.HandlerFu
 }
 
 func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		render.Template(w, r, "guestbook-form.go.html", &types.TemplateData{
-			PageTitle: "Sign Guestbook",
-		})
-	}
 	if r.Method == "POST" {
-		name := r.PostForm.Get("name")
+
+		name := r.FormValue("name")
+		fmt.Println("name: ", name)
 
 		signature := types.GuestbookSignature{
 			Name:       name,
@@ -59,8 +57,12 @@ func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r
 			return
 		}
 
+		objects := make(map[string]interface{})
+		objects["signed"] = name
+
 		render.Template(w, r, "guestbook-signed-successfully.go.html", &types.TemplateData{
 			PageTitle: "Guestbook Signed",
+			ObjectMap: objects,
 		})
 	}
 }
