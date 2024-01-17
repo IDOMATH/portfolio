@@ -112,7 +112,7 @@ func (s *PostgresGuestbookStore) GetAllGuestbookSignatures() ([]types.GuestbookS
 	var signatures []types.GuestbookSignature
 
 	query := `
-		select id, name, email, created_at
+		select id, name, is_approved, created_at
 		from guestbook`
 
 	rows, err := s.DB.QueryContext(ctx, query)

@@ -80,9 +80,10 @@ func main() {
 	http.HandleFunc("/resume", handlers.HandleGetResume)
 
 	http.HandleFunc("/user", userHandler.HandlePostUser)
-	fmt.Println("Before get approved guestbook")
-	http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures())
+
+	http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures)
 	http.HandleFunc("/sign-guestbook", guestbookHandler.HandlePostGuestbookSignature)
+	http.HandleFunc("/guestbook-admin", guestbookHandler.HandleGetAllGuestbookSignature)
 
 	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
 	http.HandleFunc("/fitness-form", fitnessHandler.HandlePostFitness)

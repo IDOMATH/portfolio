@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
@@ -20,31 +19,28 @@ func NewGuestbookHandler(guestbookStore db.PostgresGuestbookStore) *GuestbookHan
 	}
 }
 
-func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures() http.HandlerFunc {
+func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures(w http.ResponseWriter, r *http.Request) {
 
 	signatures, err := h.guestbookStore.GetApprovedGuestbookSignatures()
 	objects := make(map[string]interface{})
 	objects["signatures"] = signatures
 
 	if err != nil {
-		return func(w http.ResponseWriter, r *http.Request) {
-			util.WriteError(w, http.StatusInternalServerError, err)
-		}
+		util.WriteError(w, http.StatusInternalServerError, err)
+		return
 	}
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		render.Template(w, r, "guestbook.go.html", &types.TemplateData{
-			PageTitle: "Guestbook",
-			ObjectMap: objects,
-		})
-	}
+	render.Template(w, r, "guestbook.go.html", &types.TemplateData{
+		PageTitle: "Guestbook",
+		ObjectMap: objects,
+	})
+
 }
 
 func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 		name := r.FormValue("name")
-		fmt.Println("name: ", name)
 
 		signature := types.GuestbookSignature{
 			Name:       name,
@@ -67,22 +63,20 @@ func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r
 	}
 }
 
-func (h *GuestbookHandler) HandleGetAllGuestbookSignature() http.HandlerFunc {
+func (h *GuestbookHandler) HandleGetAllGuestbookSignature(w http.ResponseWriter, r *http.Request) {
 
 	signatures, err := h.guestbookStore.GetAllGuestbookSignatures()
 	objects := make(map[string]interface{})
 	objects["signatures"] = signatures
 
 	if err != nil {
-		return func(w http.ResponseWriter, r *http.Request) {
-			util.WriteError(w, http.StatusInternalServerError, err)
-		}
+		util.WriteError(w, http.StatusInternalServerError, err)
+		return
 	}
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		render.Template(w, r, "guestbook-admin.go.html", &types.TemplateData{
-			PageTitle: "Guestbook Admin",
-			ObjectMap: objects,
-		})
-	}
+	render.Template(w, r, "guestbook-admin.go.html", &types.TemplateData{
+		PageTitle: "Guestbook Admin",
+		ObjectMap: objects,
+	})
+
 }
