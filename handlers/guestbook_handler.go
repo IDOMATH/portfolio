@@ -6,6 +6,7 @@ import (
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -20,7 +21,6 @@ func NewGuestbookHandler(guestbookStore db.PostgresGuestbookStore) *GuestbookHan
 }
 
 func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures(w http.ResponseWriter, r *http.Request) {
-
 	signatures, err := h.guestbookStore.GetApprovedGuestbookSignatures()
 	objects := make(map[string]interface{})
 	objects["signatures"] = signatures
@@ -64,7 +64,6 @@ func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r
 }
 
 func (h *GuestbookHandler) HandleGetAllGuestbookSignature(w http.ResponseWriter, r *http.Request) {
-
 	signatures, err := h.guestbookStore.GetAllGuestbookSignatures()
 	objects := make(map[string]interface{})
 	objects["signatures"] = signatures
@@ -78,5 +77,19 @@ func (h *GuestbookHandler) HandleGetAllGuestbookSignature(w http.ResponseWriter,
 		PageTitle: "Guestbook Admin",
 		ObjectMap: objects,
 	})
+
+}
+
+func (h *GuestbookHandler) HandleApproveGuestbookSignature(w http.ResponseWriter, r *http.Request) {
+	reqId, err := strconv.Atoi(r.FormValue("id"))
+	if err != nil {
+		util.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+	err = h.guestbookStore.ApproveGuestbookSignature(reqId)
+	if err != nil {
+		util.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
 
 }

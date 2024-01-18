@@ -1,13 +1,30 @@
 {{template "base" .}}
 
 {{define "content"}}
-<div class="row">
     {{$signatures := index .ObjectMap "signatures"}}
-    {{range $signatures}}
-        <div class="column">
 
-            <p>{{.Name}}</p>
-        </div>
+        <form id="checked-contacts">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                {{range $signatures}}
+                <tbody id="tbody">
+                    <tr class="">
+                        <td><input type='checkbox' name='ids' value='{{.Id}}'></td>
+                        <td>{{.Name}}</td>
+                        <td>{{.IsApproved}}</td>
+                        <div hx-include="#checked-contacts" hx-target="#tbody">
+                            {{ if eq .IsApproved false}}<button class="btn" hx-put="/activate">Activate</button> {{ end }}
+                            <button class="btn" hx-put="/deactivate">Deactivate</button>
+                        </div>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
     {{end}}
-</div>
 {{end}}
