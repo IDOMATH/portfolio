@@ -83,7 +83,9 @@ func main() {
 
 	http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures)
 	http.HandleFunc("/sign-guestbook", guestbookHandler.HandlePostGuestbookSignature)
-	http.HandleFunc("/guestbook-admin", guestbookHandler.HandleGetAllGuestbookSignature)
+	http.HandleFunc("/admin/guestbook", guestbookHandler.HandleGetAllGuestbookSignature)
+	http.HandleFunc("/admin/guestbook/approve", guestbookHandler.HandleApproveGuestbookSignature)
+	http.HandleFunc("/admin/guestbook/deny", guestbookHandler.HandleDenyGuestbookSignature)
 
 	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
 	http.HandleFunc("/fitness-form", fitnessHandler.HandlePostFitness)

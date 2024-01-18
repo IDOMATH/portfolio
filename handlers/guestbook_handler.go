@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
@@ -82,11 +83,27 @@ func (h *GuestbookHandler) HandleGetAllGuestbookSignature(w http.ResponseWriter,
 
 func (h *GuestbookHandler) HandleApproveGuestbookSignature(w http.ResponseWriter, r *http.Request) {
 	reqId, err := strconv.Atoi(r.FormValue("id"))
+	fmt.Println("approving id: ", reqId)
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 	err = h.guestbookStore.ApproveGuestbookSignature(reqId)
+	if err != nil {
+		util.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+}
+
+func (h *GuestbookHandler) HandleDenyGuestbookSignature(w http.ResponseWriter, r *http.Request) {
+	reqId, err := strconv.Atoi(r.FormValue("id"))
+	fmt.Println("denying id: ", reqId)
+	if err != nil {
+		util.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+	//err = h.guestbookStore.DenyGuestbookSignature(reqId)
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)
 		return

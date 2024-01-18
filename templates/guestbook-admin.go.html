@@ -17,10 +17,10 @@
                     <tr class="">
                         <td><input type='checkbox' name='ids' value='{{.Id}}'></td>
                         <td>{{.Name}}</td>
-                        <td>{{.IsApproved}}</td>
+                        <td>{{ if eq .IsApproved true}}Approved{{ else }}Awaiting Approval{{ end }}</td>
                         <div hx-include="#checked-contacts" hx-target="#tbody">
-                            {{ if eq .IsApproved false}}<button class="btn" hx-put="/activate">Activate</button> {{ end }}
-                            <button class="btn" hx-put="/deactivate">Deactivate</button>
+                            {{ if eq .IsApproved false}}<button class="btn" hx-put="/admin/guestbook/approve">Approve</button> {{ end }}
+                            <button class="btn" hx-put="/admin/guestbook/deny">Deny</button>
                         </div>
                     </tr>
                 </tbody>
