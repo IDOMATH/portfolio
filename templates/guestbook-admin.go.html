@@ -3,28 +3,54 @@
 {{define "content"}}
     {{$signatures := index .ObjectMap "signatures"}}
 
-        <form id="checked-contacts">
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                {{range $signatures}}
-                <tbody id="tbody">
-                    <tr class="">
-                        <td><input type='checkbox' name='ids' value='{{.Id}}'></td>
-                        <td>{{.Name}}</td>
-                        <td>{{ if eq .IsApproved true}}Approved{{ else }}Awaiting Approval{{ end }}</td>
-                        <div hx-include="#checked-contacts" hx-target="#tbody">
-                            {{ if eq .IsApproved false}}<button class="btn" hx-put="/admin/guestbook/approve">Approve</button> {{ end }}
-                            <button class="btn" hx-put="/admin/guestbook/deny">Deny</button>
-                        </div>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    {{end}}
+    <form id="checked-contacts">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            {{range $signatures}}
+            <tr class="">
+                <td><input type='checkbox' name='signature{{.Id}}' value='{{.Id}}'></td>
+                <td>{{.Name}}</td>
+                <td>{{ if eq .IsApproved true}}Approved{{ else }}Awaiting Approval{{ end }}</td>
+
+                <div hx-include="[name='signature{{.Id}}']" hx-target="#tbody">
+                    <button class="btn" hx-put="/admin/guestbook/approve">Activate</button>
+                    <button class="btn" hx-put="/admin/guestbook/deny">Deactivate</button>
+                </div>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </form>
+{{/*        <form id="checked-contacts">*/}}
+{{/*            <table>*/}}
+{{/*                <thead>*/}}
+{{/*                    <tr>*/}}
+{{/*                        <th></th>*/}}
+{{/*                        <th>Name</th>*/}}
+{{/*                        <th>Status</th>*/}}
+{{/*                    </tr>*/}}
+{{/*                </thead>*/}}
+{{/*                {{range $signatures}}*/}}
+{{/*                <tbody id="tbody">*/}}
+{{/*                    <tr class="">*/}}
+{{/*                        <td><input type='checkbox' name='id' value='{{.Id}}'></td>*/}}
+{{/*                        <td>{{.Name}}</td>*/}}
+{{/*                        <td>{{ if eq .IsApproved true}}Approved{{ else }}Awaiting Approval{{ end }}</td>*/}}
+{{/*                        <div hx-include="#checked-contacts" hx-target="#tbody">*/}}
+{{/*                            {{ if eq .IsApproved false}}<button class="btn" hx-put="/admin/guestbook/approve">Approve</button> {{ end }}*/}}
+{{/*                            <button class="btn" hx-put="/admin/guestbook/deny">Deny</button>*/}}
+{{/*                        </div>*/}}
+{{/*                    </tr>*/}}
+{{/*                </tbody>*/}}
+{{/*            </table>*/}}
+{{/*        </form>*/}}
+{{/*    {{end}}*/}}
 {{end}}

@@ -97,12 +97,20 @@ func (h *GuestbookHandler) HandleApproveGuestbookSignature(w http.ResponseWriter
 }
 
 func (h *GuestbookHandler) HandleDenyGuestbookSignature(w http.ResponseWriter, r *http.Request) {
+	//var ids int[]
 	reqId, err := strconv.Atoi(r.FormValue("id"))
-	fmt.Println("denying id: ", reqId)
+	//for _, reqId := range r.Form {
+	//	id, err := strconv.Atoi(reqId)
+	//	ids = append(ids, id)
+	//}
+	//reqId := r.FormValue("ids")
+	//var err error
+	//fmt.Printf("ID: %v", id)
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
+	fmt.Println("ID: ", reqId)
 	//err = h.guestbookStore.DenyGuestbookSignature(reqId)
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)
