@@ -9,8 +9,6 @@ import (
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html/v2"
 	"github.com/gofor-little/env"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -18,6 +16,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -27,16 +26,12 @@ const mongoDbName = "portfolio"
 const blogCollection = "blog"
 const templatesLocation = "./templates"
 
-var config = fiber.Config{
-	ErrorHandler: func(c *fiber.Ctx, err error) error {
-		return c.JSON(map[string]string{"error": err.Error()})
-	},
-	Views: html.New(templatesLocation, ".go.html"),
-}
 var blogHandler *handlers.BlogHandler
 var userHandler *handlers.UserHandler
 var guestbookHandler *handlers.GuestbookHandler
 var fitnessHandler *handlers.FitnessHandler
+
+var regexNumber = regexp.MustCompile(`\d`)
 
 // main is the entry point to the application
 func main() {
@@ -71,72 +66,74 @@ func main() {
 	guestbookHandler = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
 	fitnessHandler = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 
+	// Match all requests and route them with our router
 	http.HandleFunc("/", middleware.Authentication(Route))
-
-	//http.HandleFunc("/contact", handlers.HandleContact)
-
-	//http.HandleFunc("/blog", blogHandler.HandleBlog)
-	http.HandleFunc("/admin/blog", blogHandler.HandleNewBlog)
-	// TODO: add pattern matching for URLs
-	//http.HandleFunc("/blog/:id", blogHandler.HandleGetBlogById)
-
-	http.HandleFunc("/pic", HandlePic)
-
-	http.HandleFunc("/resume", handlers.HandleGetResume)
-
-	http.HandleFunc("/user", userHandler.HandlePostUser)
-
-	//http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures)
-	http.HandleFunc("/guestbook/sign", guestbookHandler.HandlePostGuestbookSignature)
-	//http.HandleFunc("/admin/guestbook", guestbookHandler.HandleGetAllGuestbookSignature)
-	//http.HandleFunc("/admin/guestbook/approve", guestbookHandler.HandleApproveGuestbookSignature)
-	//http.HandleFunc("/admin/guestbook/deny", guestbookHandler.HandleDenyGuestbookSignature)
-
-	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
-	http.HandleFunc("/admin/fitness", fitnessHandler.HandlePostFitness)
-
-	http.HandleFunc("/clicked", handleClicked)
 
 	fmt.Println("Starting server on port ", portNumber)
 	http.ListenAndServe(portNumber, nil)
 }
 
 func Route(w http.ResponseWriter, r *http.Request) {
-	i := 0
+	// Start the URL at 1, because the leading slash makes entry 0 the empty string ""
+	i := 1
 	url := strings.Split(r.URL.Path, "/")
-	fmt.Println("URL: ", url)
-	fmt.Println("url segment: ", url[0])
-	if len(url) == 0 {
+
+	// TODO: split each of these segments into a separate function to allow for more specific middleware usage
+	switch url[i] {
+	case "":
 		handlers.HandleHome(w, r)
-	}
-	switch url[0] {
 	case "contact":
 		handlers.HandleContact(w, r)
 	case "blog":
-		fmt.Println("blog")
+		if len(url)-1 > i {
+			i++
+			segment := url[i]
+			switch {
+			case regexNumber.MatchString(segment):
+				blogHandler.HandleGetBlogById(w, r)
+			}
+		}
 		blogHandler.HandleBlog(w, r)
 	case "pic":
 		HandlePic(w, r)
 	case "resume":
-		break
-	case "/guestbook":
-		break
-	case "admin":
-		i++
-		switch segment := url[i]; segment {
-		case "guestbook":
+		handlers.HandleGetResume(w, r)
+	case "guestbook":
+		if len(url)-1 > i {
 			i++
 			switch segment := url[i]; segment {
-			case "approve":
-				fmt.Println("Approve guestbook signature")
-				guestbookHandler.HandleApproveGuestbookSignature(w, r)
-			case "deny":
-				fmt.Println("Deny guestbook signature")
-				guestbookHandler.HandleDenyGuestbookSignature(w, r)
+			case "sign":
+				guestbookHandler.HandlePostGuestbookSignature(w, r)
 			}
-		default:
-			guestbookHandler.HandleGetAllGuestbookSignature(w, r)
 		}
+		guestbookHandler.HandleGetApprovedGuestbookSignatures(w, r)
+	case "user":
+		userHandler.HandlePostUser(w, r)
+	case "fitness":
+		fitnessHandler.HandleGetFitness(w, r)
+	case "clicked":
+		handleClicked(w, r)
+	case "admin":
+		if len(url)-1 > i {
+			i++
+			switch segment := url[i]; segment {
+			case "guestbook":
+				if len(url) > i {
+					i++
+					switch segment := url[i]; segment {
+					case "approve":
+						guestbookHandler.HandleApproveGuestbookSignature(w, r)
+					case "deny":
+						guestbookHandler.HandleDenyGuestbookSignature(w, r)
+					}
+				}
+			case "blog":
+				blogHandler.HandleNewBlog(w, r)
+			case "fitness":
+				fitnessHandler.HandlePostFitness(w, r)
+			}
+		}
+
 	default:
 		fmt.Println("handle 404, segment not found: ", url[0])
 	}

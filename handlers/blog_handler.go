@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
@@ -42,14 +43,17 @@ func (h *BlogHandler) HandleBlog(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) {
+	// Path to get here is	 /blog/{id}
+	// 					  [0]/[1] /[2]
 	url := strings.Split(r.URL.Path, "/")
+	fmt.Println(url)
 	id := url[1]
 	blog, err := h.blogStore.GetBlogById(context.Background(), id)
 	if err != nil {
 		// TODO: make this return a handlerfunc
 		util.WriteError(w, http.StatusInternalServerError, err)
 	}
-
+	// TODO: Make a template for singular blogs
 	w.Write([]byte(blog.Title))
 }
 
