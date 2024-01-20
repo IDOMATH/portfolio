@@ -19,11 +19,12 @@
                 <td><input type='checkbox' name='signature{{.Id}}' value='{{.Id}}'></td>
                 <td>{{.Name}}</td>
                 <td>{{ if eq .IsApproved true}}Approved{{ else }}Awaiting Approval{{ end }}</td>
-
+                <td>
                 <div hx-include="[name='signature{{.Id}}']" hx-target="#tbody">
                     <button class="btn" hx-put="/admin/guestbook/approve">Activate</button>
-                    <button class="btn" hx-put="/admin/guestbook/deny">Deactivate</button>
+                    <button class="btn" hx-put="/admin/guestbook/deny/{{.Id}}">Deactivate</button>
                 </div>
+                </td>
             </tr>
             {{end}}
             </tbody>

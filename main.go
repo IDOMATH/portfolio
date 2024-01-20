@@ -18,6 +18,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 const portNumber = ":8080"
@@ -32,6 +33,10 @@ var config = fiber.Config{
 	},
 	Views: html.New(templatesLocation, ".go.html"),
 }
+var blogHandler *handlers.BlogHandler
+var userHandler *handlers.UserHandler
+var guestbookHandler *handlers.GuestbookHandler
+var fitnessHandler *handlers.FitnessHandler
 
 // main is the entry point to the application
 func main() {
@@ -61,17 +66,17 @@ func main() {
 	}
 	fmt.Println("Connected to Postgres")
 
-	blogHandler := handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
-	userHandler := handlers.NewUserHandler(db.NewUserStore(client, mongoDbName))
-	guestbookHandler := handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
-	fitnessHandler := handlers.NewFintessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
+	blogHandler = handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
+	userHandler = handlers.NewUserHandler(db.NewUserStore(client, mongoDbName))
+	guestbookHandler = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
+	fitnessHandler = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 
-	http.HandleFunc("/", middleware.Authentication(handlers.HandleHome))
+	http.HandleFunc("/", middleware.Authentication(Route))
 
-	http.HandleFunc("/contact", handlers.HandleContact)
+	//http.HandleFunc("/contact", handlers.HandleContact)
 
-	http.HandleFunc("/blog", blogHandler.HandleBlog)
-	http.HandleFunc("/new-blog", blogHandler.HandleNewBlog)
+	//http.HandleFunc("/blog", blogHandler.HandleBlog)
+	http.HandleFunc("/admin/blog", blogHandler.HandleNewBlog)
 	// TODO: add pattern matching for URLs
 	//http.HandleFunc("/blog/:id", blogHandler.HandleGetBlogById)
 
@@ -81,19 +86,60 @@ func main() {
 
 	http.HandleFunc("/user", userHandler.HandlePostUser)
 
-	http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures)
-	http.HandleFunc("/sign-guestbook", guestbookHandler.HandlePostGuestbookSignature)
-	http.HandleFunc("/admin/guestbook", guestbookHandler.HandleGetAllGuestbookSignature)
-	http.HandleFunc("/admin/guestbook/approve", guestbookHandler.HandleApproveGuestbookSignature)
-	http.HandleFunc("/admin/guestbook/deny", guestbookHandler.HandleDenyGuestbookSignature)
+	//http.HandleFunc("/guestbook", guestbookHandler.HandleGetApprovedGuestbookSignatures)
+	http.HandleFunc("/guestbook/sign", guestbookHandler.HandlePostGuestbookSignature)
+	//http.HandleFunc("/admin/guestbook", guestbookHandler.HandleGetAllGuestbookSignature)
+	//http.HandleFunc("/admin/guestbook/approve", guestbookHandler.HandleApproveGuestbookSignature)
+	//http.HandleFunc("/admin/guestbook/deny", guestbookHandler.HandleDenyGuestbookSignature)
 
 	http.HandleFunc("/fitness", fitnessHandler.HandleGetFitness)
-	http.HandleFunc("/fitness-form", fitnessHandler.HandlePostFitness)
+	http.HandleFunc("/admin/fitness", fitnessHandler.HandlePostFitness)
 
 	http.HandleFunc("/clicked", handleClicked)
 
 	fmt.Println("Starting server on port ", portNumber)
 	http.ListenAndServe(portNumber, nil)
+}
+
+func Route(w http.ResponseWriter, r *http.Request) {
+	i := 0
+	url := strings.Split(r.URL.Path, "/")
+	fmt.Println("URL: ", url)
+	fmt.Println("url segment: ", url[0])
+	if len(url) == 0 {
+		handlers.HandleHome(w, r)
+	}
+	switch url[0] {
+	case "contact":
+		handlers.HandleContact(w, r)
+	case "blog":
+		fmt.Println("blog")
+		blogHandler.HandleBlog(w, r)
+	case "pic":
+		HandlePic(w, r)
+	case "resume":
+		break
+	case "/guestbook":
+		break
+	case "admin":
+		i++
+		switch segment := url[i]; segment {
+		case "guestbook":
+			i++
+			switch segment := url[i]; segment {
+			case "approve":
+				fmt.Println("Approve guestbook signature")
+				guestbookHandler.HandleApproveGuestbookSignature(w, r)
+			case "deny":
+				fmt.Println("Deny guestbook signature")
+				guestbookHandler.HandleDenyGuestbookSignature(w, r)
+			}
+		default:
+			guestbookHandler.HandleGetAllGuestbookSignature(w, r)
+		}
+	default:
+		fmt.Println("handle 404, segment not found: ", url[0])
+	}
 }
 
 func handleClicked(w http.ResponseWriter, r *http.Request) {

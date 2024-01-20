@@ -15,7 +15,7 @@ type FitnessHandler struct {
 	fitnessStore db.PostgresFitnessStore
 }
 
-func NewFintessHandler(store db.PostgresFitnessStore) *FitnessHandler {
+func NewFitnessHandler(store db.PostgresFitnessStore) *FitnessHandler {
 	return &FitnessHandler{
 		fitnessStore: store,
 	}

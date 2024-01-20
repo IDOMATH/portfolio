@@ -7,7 +7,7 @@ import (
 
 func Authentication(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Not Authenticated")
+		log.Println("URL: ", r.URL)
 		next(w, r)
 	}
 }
