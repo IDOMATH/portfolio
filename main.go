@@ -78,35 +78,19 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	i := 1
 	url := strings.Split(r.URL.Path, "/")
 
-	// TODO: split each of these segments into a separate function to allow for more specific middleware usage
 	switch url[i] {
 	case "":
 		handlers.HandleHome(w, r)
 	case "contact":
 		handlers.HandleContact(w, r)
 	case "blog":
-		if len(url)-1 > i {
-			i++
-			segment := url[i]
-			switch {
-			case regexNumber.MatchString(segment):
-				blogHandler.HandleGetBlogById(w, r)
-			}
-		}
-		blogHandler.HandleBlog(w, r)
+		routeBlog(i, w, r)
 	case "pic":
 		HandlePic(w, r)
 	case "resume":
 		handlers.HandleGetResume(w, r)
 	case "guestbook":
-		if len(url)-1 > i {
-			i++
-			switch segment := url[i]; segment {
-			case "sign":
-				guestbookHandler.HandlePostGuestbookSignature(w, r)
-			}
-		}
-		guestbookHandler.HandleGetApprovedGuestbookSignatures(w, r)
+		routeGuestbook(i, w, r)
 	case "user":
 		userHandler.HandlePostUser(w, r)
 	case "fitness":
@@ -114,29 +98,70 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	case "clicked":
 		handleClicked(w, r)
 	case "admin":
-		if len(url)-1 > i {
-			i++
-			switch segment := url[i]; segment {
-			case "guestbook":
-				if len(url) > i {
-					i++
-					switch segment := url[i]; segment {
-					case "approve":
-						guestbookHandler.HandleApproveGuestbookSignature(w, r)
-					case "deny":
-						guestbookHandler.HandleDenyGuestbookSignature(w, r)
-					}
-				}
-			case "blog":
-				blogHandler.HandleNewBlog(w, r)
-			case "fitness":
-				fitnessHandler.HandlePostFitness(w, r)
-			}
-		}
+		routeAdmin(i, w, r)
 
 	default:
-		fmt.Println("handle 404, segment not found: ", url[0])
+		handle404(w, r)
 	}
+}
+
+func routeBlog(i int, w http.ResponseWriter, r *http.Request) {
+	url := strings.Split(r.URL.Path, "/")
+	if len(url)-1 > i {
+		i++
+		segment := url[i]
+		switch {
+		case regexNumber.MatchString(segment):
+			blogHandler.HandleGetBlogById(w, r)
+		}
+	}
+	blogHandler.HandleBlog(w, r)
+}
+
+func routeGuestbook(i int, w http.ResponseWriter, r *http.Request) {
+	url := strings.Split(r.URL.Path, "/")
+	if len(url)-1 > i {
+		i++
+		switch segment := url[i]; segment {
+		case "sign":
+			guestbookHandler.HandlePostGuestbookSignature(w, r)
+		}
+	}
+	guestbookHandler.HandleGetApprovedGuestbookSignatures(w, r)
+}
+
+func routeAdmin(i int, w http.ResponseWriter, r *http.Request) {
+	url := strings.Split(r.URL.Path, "/")
+	if len(url)-1 > i {
+		i++
+		switch segment := url[i]; segment {
+		case "guestbook":
+			routeAdminGuestbook(i, w, r)
+		case "blog":
+			blogHandler.HandleNewBlog(w, r)
+		case "fitness":
+			fitnessHandler.HandlePostFitness(w, r)
+		}
+	}
+}
+
+func routeAdminGuestbook(i int, w http.ResponseWriter, r *http.Request) {
+	url := strings.Split(r.URL.Path, "/")
+	if len(url)-1 > i {
+		i++
+		switch segment := url[i]; segment {
+		case "approve":
+			guestbookHandler.HandleApproveGuestbookSignature(w, r)
+		case "deny":
+			guestbookHandler.HandleDenyGuestbookSignature(w, r)
+		}
+	}
+	guestbookHandler.HandleGetAllGuestbookSignature(w, r)
+}
+
+func handle404(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	render.Template(w, r, "error-404.go.html", &types.TemplateData{PageTitle: "Not Found"})
 }
 
 func handleClicked(w http.ResponseWriter, r *http.Request) {

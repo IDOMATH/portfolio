@@ -46,7 +46,6 @@ func (h *UserHandler) HandlePostUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: store the uploaded file somewhere.
 	user := &types.User{
 		Username: username,
 		Email:    email,

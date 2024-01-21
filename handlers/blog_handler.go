@@ -50,7 +50,6 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 	id := url[1]
 	blog, err := h.blogStore.GetBlogById(context.Background(), id)
 	if err != nil {
-		// TODO: make this return a handlerfunc
 		util.WriteError(w, http.StatusInternalServerError, err)
 	}
 	// TODO: Make a template for singular blogs
@@ -58,7 +57,6 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
-	// TODO: store the uploaded file somewhere.
 	var blog types.BlogPost
 
 	title := r.PostForm.Get("title")
@@ -72,7 +70,6 @@ func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
 	blog.PublishedAt = time.Now()
 	insertedBlog, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
 	if err != nil {
-		// TODO: make this return a handlerfunc
 		util.WriteError(w, http.StatusInternalServerError, err)
 	}
 
