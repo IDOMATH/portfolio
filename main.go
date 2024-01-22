@@ -9,7 +9,6 @@ import (
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
-	"github.com/gofor-little/env"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"io"
@@ -23,8 +22,6 @@ import (
 const portNumber = ":8080"
 const dbUri = "mongodb://localhost:27017"
 const mongoDbName = "portfolio"
-const blogCollection = "blog"
-const templatesLocation = "./templates"
 
 var blogHandler *handlers.BlogHandler
 var userHandler *handlers.UserHandler
@@ -35,14 +32,8 @@ var regexNumber = regexp.MustCompile(`\d`)
 
 // main is the entry point to the application
 func main() {
-	// Get environment variables
-	err := env.Load("dev.env")
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	fmt.Println("Connecting to mongo")
-	// Set config details based whether the values are in the .env
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dbUri))
 	if err != nil {
 		log.Fatal(err)

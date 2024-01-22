@@ -47,10 +47,13 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 	// 					  [0]/[1] /[2]
 	url := strings.Split(r.URL.Path, "/")
 	fmt.Println(url)
-	id := url[1]
+	id := url[2]
 	blog, err := h.blogStore.GetBlogById(context.Background(), id)
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)
+	}
+	if blog == nil {
+		http.Redirect(w, r, "/blog", http.StatusTemporaryRedirect)
 	}
 	// TODO: Make a template for singular blogs
 	w.Write([]byte(blog.Title))
