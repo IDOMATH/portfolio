@@ -4,9 +4,7 @@ import (
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
-	"github.com/gofor-little/env"
 	"net/http"
-	"net/smtp"
 )
 
 type ContactDetails struct {
@@ -38,16 +36,6 @@ func PostContactForm(w http.ResponseWriter, r *http.Request) error {
 	subject := r.Form.Get("subject")
 	message := r.Form.Get("message")
 
-	from, err := env.MustGet("EMAIL")
-	if err != nil {
-		return err
-	}
-
-	password, err := env.MustGet("PASSWORD")
-	if err != nil {
-		return err
-	}
-
 	bools := make(map[string]bool)
 
 	if !util.IsValidEmail(email) {
@@ -58,16 +46,7 @@ func PostContactForm(w http.ResponseWriter, r *http.Request) error {
 				BoolMap:   bools,
 			})
 	}
-	to := []string{
-		email,
-	}
-
-	smtpHost := "smtp.gmail.com"
-	smtpPort := "587"
-
-	auth := smtp.PlainAuth("", from, password, smtpHost)
-
-	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, []byte(message))
+	err = util.SendEmail(email, message)
 	if err != nil {
 		return err
 	}
