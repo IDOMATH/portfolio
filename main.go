@@ -30,6 +30,9 @@ var fitnessHandler *handlers.FitnessHandler
 
 var regexNumber = regexp.MustCompile(`\d`)
 
+// Start the URL at 1, because the leading slash makes entry 0 the empty string ""
+var urlIndex = 1
+
 // main is the entry point to the application
 func main() {
 
@@ -58,30 +61,28 @@ func main() {
 	fitnessHandler = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 
 	// Match all requests and route them with our router
-	http.HandleFunc("/", middleware.Authentication(Route))
+	http.HandleFunc("/", Route)
 
 	fmt.Println("Starting server on port ", portNumber)
 	http.ListenAndServe(portNumber, nil)
 }
 
 func Route(w http.ResponseWriter, r *http.Request) {
-	// Start the URL at 1, because the leading slash makes entry 0 the empty string ""
-	i := 1
 	url := strings.Split(r.URL.Path, "/")
 
-	switch url[i] {
+	switch url[urlIndex] {
 	case "":
 		handlers.HandleHome(w, r)
 	case "contact":
 		handlers.HandleContact(w, r)
 	case "blog":
-		routeBlog(i, w, r)
+		routeBlog(w, r)
 	case "pic":
 		HandlePic(w, r)
 	case "resume":
 		handlers.HandleGetResume(w, r)
 	case "guestbook":
-		routeGuestbook(i, w, r)
+		routeGuestbook(w, r)
 	case "user":
 		userHandler.HandlePostUser(w, r)
 	case "fitness":
@@ -89,18 +90,19 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	case "clicked":
 		handleClicked(w, r)
 	case "admin":
-		routeAdmin(i, w, r)
+		//TODO: I broke this, figure out how to make middleware work with this
+		middleware.Authentication(routeAdmin)
 
 	default:
 		handle404(w, r)
 	}
 }
 
-func routeBlog(i int, w http.ResponseWriter, r *http.Request) {
+func routeBlog(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > i {
-		i++
-		segment := url[i]
+	if len(url)-1 > urlIndex {
+		urlIndex++
+		segment := url[urlIndex]
 		switch {
 		case regexNumber.MatchString(segment):
 			blogHandler.HandleGetBlogById(w, r)
@@ -109,11 +111,11 @@ func routeBlog(i int, w http.ResponseWriter, r *http.Request) {
 	blogHandler.HandleBlog(w, r)
 }
 
-func routeGuestbook(i int, w http.ResponseWriter, r *http.Request) {
+func routeGuestbook(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > i {
-		i++
-		switch segment := url[i]; segment {
+	if len(url)-1 > urlIndex {
+		urlIndex++
+		switch segment := url[urlIndex]; segment {
 		case "sign":
 			guestbookHandler.HandlePostGuestbookSignature(w, r)
 		}
@@ -121,13 +123,13 @@ func routeGuestbook(i int, w http.ResponseWriter, r *http.Request) {
 	guestbookHandler.HandleGetApprovedGuestbookSignatures(w, r)
 }
 
-func routeAdmin(i int, w http.ResponseWriter, r *http.Request) {
+func routeAdmin(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > i {
-		i++
-		switch segment := url[i]; segment {
+	if len(url)-1 > urlIndex {
+		urlIndex++
+		switch segment := url[urlIndex]; segment {
 		case "guestbook":
-			routeAdminGuestbook(i, w, r)
+			middleware.Authentication(routeAdminGuestbook)
 		case "blog":
 			blogHandler.HandleNewBlog(w, r)
 		case "fitness":
@@ -136,11 +138,11 @@ func routeAdmin(i int, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func routeAdminGuestbook(i int, w http.ResponseWriter, r *http.Request) {
+func routeAdminGuestbook(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > i {
-		i++
-		switch segment := url[i]; segment {
+	if len(url)-1 > urlIndex {
+		urlIndex++
+		switch segment := url[urlIndex]; segment {
 		case "approve":
 			guestbookHandler.HandleApproveGuestbookSignature(w, r)
 		case "deny":

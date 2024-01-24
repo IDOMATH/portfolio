@@ -59,6 +59,10 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 	w.Write([]byte(blog.Title))
 }
 
+func (h *BlogHandler) HandleBlogForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Form for a new blog"))
+}
+
 func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
 	var blog types.BlogPost
 
