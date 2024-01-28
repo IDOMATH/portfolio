@@ -35,3 +35,9 @@ func TestSessionManager(t *testing.T) {
 	wg.Wait()
 	fmt.Println("10 million sessions simulated")
 }
+
+func TestSessionManagerPut(t *testing.T) {
+	sess := NewManager("test", time.Minute*5)
+
+	sess.PutSession()
+}
