@@ -2,6 +2,7 @@ package session
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -39,5 +40,9 @@ func TestSessionManager(t *testing.T) {
 func TestSessionManagerPut(t *testing.T) {
 	sess := NewManager("test", time.Minute*5)
 
-	sess.PutSession()
+	req, _ := http.NewRequest("GET", "/test", nil)
+	rr := httptest.NewRecorder()
+	sess.PutSession(rr, req, &Session{name: "testing"})
+
+	assert.Equal(t, Session{name: "testing"}, sess.GetSessionFromRequest(req))
 }
