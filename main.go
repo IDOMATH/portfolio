@@ -68,8 +68,8 @@ func main() {
 }
 
 func Route(w http.ResponseWriter, r *http.Request) {
+	urlIndex = 1
 	url := strings.Split(r.URL.Path, "/")
-
 	switch url[urlIndex] {
 	case "":
 		handlers.HandleHome(w, r)
@@ -90,20 +90,22 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	case "clicked":
 		handleClicked(w, r)
 	case "admin":
-		//TODO: I broke this, figure out how to make middleware work with this
-		middleware.Authentication(routeAdmin)
+		fmt.Println("/admin")
+		middleware.Authentication(routeAdmin, w, r)
 
 	default:
 		handle404(w, r)
 	}
 }
 
+// routeBlog handles the url segment /blog
 func routeBlog(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
 	if len(url)-1 > urlIndex {
 		urlIndex++
 		segment := url[urlIndex]
 		switch {
+		// This is /blog/{id}
 		case regexNumber.MatchString(segment):
 			blogHandler.HandleGetBlogById(w, r)
 		}
@@ -124,13 +126,15 @@ func routeGuestbook(w http.ResponseWriter, r *http.Request) {
 }
 
 func routeAdmin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("routeAdmin")
 	url := strings.Split(r.URL.Path, "/")
 	if len(url)-1 > urlIndex {
 		urlIndex++
 		switch segment := url[urlIndex]; segment {
 		case "guestbook":
-			middleware.Authentication(routeAdminGuestbook)
+			middleware.Authentication(routeAdminGuestbook, w, r)
 		case "blog":
+			fmt.Println("routeAdmin /admin/blog")
 			blogHandler.HandleNewBlog(w, r)
 		case "fitness":
 			fitnessHandler.HandlePostFitness(w, r)
