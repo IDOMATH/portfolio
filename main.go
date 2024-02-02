@@ -90,7 +90,6 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	case "clicked":
 		handleClicked(w, r)
 	case "admin":
-		fmt.Println("/admin")
 		middleware.Authentication(routeAdmin, w, r)
 
 	default:
@@ -126,7 +125,6 @@ func routeGuestbook(w http.ResponseWriter, r *http.Request) {
 }
 
 func routeAdmin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("routeAdmin")
 	url := strings.Split(r.URL.Path, "/")
 	if len(url)-1 > urlIndex {
 		urlIndex++
@@ -134,7 +132,6 @@ func routeAdmin(w http.ResponseWriter, r *http.Request) {
 		case "guestbook":
 			middleware.Authentication(routeAdminGuestbook, w, r)
 		case "blog":
-			fmt.Println("routeAdmin /admin/blog")
 			blogHandler.HandleNewBlog(w, r)
 		case "fitness":
 			fitnessHandler.HandlePostFitness(w, r)
