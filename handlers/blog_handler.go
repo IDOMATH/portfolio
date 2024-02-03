@@ -75,10 +75,11 @@ func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
 	blog.Body = body
 	blog.ImageName = imageName
 	blog.PublishedAt = time.Now()
-	insertedBlog, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
+	_, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)
 	}
 
-	w.Write([]byte(insertedBlog.Title))
+	// TODO: Make this actually load the page
+	http.Redirect(w, r, "/blog", http.StatusCreated)
 }
