@@ -132,9 +132,22 @@ func routeAdmin(w http.ResponseWriter, r *http.Request) {
 		case "guestbook":
 			middleware.Authentication(routeAdminGuestbook, w, r)
 		case "blog":
-			blogHandler.HandleNewBlog(w, r)
+			routeAdminBlog(w, r)
 		case "fitness":
 			fitnessHandler.HandlePostFitness(w, r)
+		}
+	}
+}
+
+func routeAdminBlog(w http.ResponseWriter, r *http.Request) {
+	url := strings.Split(r.URL.Path, "/")
+	if len(url)-1 > urlIndex {
+		urlIndex++
+		switch segment := url[urlIndex]; segment {
+		case "new":
+			blogHandler.HandleNewBlog(w, r)
+		default:
+			//TODO: Implement a dashboard to get all blogs to edit
 		}
 	}
 }

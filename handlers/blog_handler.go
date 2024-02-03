@@ -59,27 +59,29 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 	w.Write([]byte(blog.Title))
 }
 
-func (h *BlogHandler) HandleBlogForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Form for a new blog"))
-}
-
 func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
-	var blog types.BlogPost
-
-	title := r.PostForm.Get("title")
-	// TODO: get the author from the logged in user.
-	body := r.PostForm.Get("body")
-	imageName := r.PostForm.Get("image")
-
-	blog.Title = title
-	blog.Body = body
-	blog.ImageName = imageName
-	blog.PublishedAt = time.Now()
-	_, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
-	if err != nil {
-		util.WriteError(w, http.StatusInternalServerError, err)
+	if r.Method == "GET" {
+		render.Template(w, r, "blog-form.go.html", &types.TemplateData{PageTitle: "New Blog"})
 	}
+	if r.Method == "POST" {
 
-	// TODO: Make this actually load the page
-	http.Redirect(w, r, "/blog", http.StatusCreated)
+		var blog types.BlogPost
+
+		title := r.PostForm.Get("title")
+		// TODO: get the author from the logged in user.
+		body := r.PostForm.Get("body")
+		imageName := r.PostForm.Get("image")
+
+		blog.Title = title
+		blog.Body = body
+		blog.ImageName = imageName
+		blog.PublishedAt = time.Now()
+		_, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
+		if err != nil {
+			util.WriteError(w, http.StatusInternalServerError, err)
+		}
+
+		// TODO: Make this actually load the page
+		http.Redirect(w, r, "/blog", http.StatusCreated)
+	}
 }

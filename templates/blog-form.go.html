@@ -1,0 +1,17 @@
+{{template "base" .}}
+
+{{define "content"}}
+
+    <form hx-post="/admin/blog/new" hx-target="this" hx-swap="outerHTML">
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" name="title" value="Title">
+        </div>
+        <div class="form-group">
+            <label>Body</label>
+            <input type="textarea" name="body" value="Content goes here.">
+        </div>
+        <button class="btn">Submit</button>
+    </form>
+
+{{end}}
