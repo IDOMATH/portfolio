@@ -67,10 +67,10 @@ func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
 
 		var blog types.BlogPost
 
-		title := r.PostForm.Get("title")
+		title := r.FormValue("title")
 		// TODO: get the author from the logged in user.
-		body := r.PostForm.Get("body")
-		imageName := r.PostForm.Get("image")
+		body := r.FormValue("body")
+		imageName := r.FormValue("image")
 
 		blog.Title = title
 		blog.Body = body
