@@ -35,7 +35,6 @@ var urlIndex = 1
 
 // main is the entry point to the application
 func main() {
-
 	fmt.Println("Connecting to mongo")
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dbUri))
 	if err != nil {
@@ -55,19 +54,33 @@ func main() {
 	}
 	fmt.Println("Connected to Postgres")
 
-	blogHandler = handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
-	userHandler = handlers.NewUserHandler(db.NewUserStore(client, mongoDbName))
-	guestbookHandler = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
-	fitnessHandler = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
+	repo := NewRepo()
+
+	repo.BH = handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
+	repo.UH = handlers.NewUserHandler(db.NewUserStore(client, mongoDbName))
+	repo.GH = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
+	repo.FH = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 
 	// Match all requests and route them with our router
-	http.HandleFunc("/", Route)
+	http.HandleFunc("/", repo.Route)
 
 	fmt.Println("Starting server on port ", portNumber)
 	http.ListenAndServe(portNumber, nil)
 }
 
-func Route(w http.ResponseWriter, r *http.Request) {
+type Repository struct {
+	Session map[string]string
+	BH      *handlers.BlogHandler
+	UH      *handlers.UserHandler
+	GH      *handlers.GuestbookHandler
+	FH      *handlers.FitnessHandler
+}
+
+func NewRepo() *Repository {
+	return &Repository{}
+}
+
+func (repo *Repository) Route(w http.ResponseWriter, r *http.Request) {
 	urlIndex = 1
 	url := strings.Split(r.URL.Path, "/")
 	switch url[urlIndex] {
@@ -76,21 +89,21 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	case "contact":
 		handlers.HandleContact(w, r)
 	case "blog":
-		routeBlog(w, r)
+		repo.routeBlog(w, r)
 	case "pic":
 		HandlePic(w, r)
 	case "resume":
 		handlers.HandleGetResume(w, r)
 	case "guestbook":
-		routeGuestbook(w, r)
+		repo.routeGuestbook(w, r)
 	case "user":
-		userHandler.HandlePostUser(w, r)
+		repo.UH.HandlePostUser(w, r)
 	case "fitness":
-		fitnessHandler.HandleGetFitness(w, r)
+		repo.FH.HandleGetFitness(w, r)
 	case "clicked":
 		handleClicked(w, r)
 	case "admin":
-		middleware.Authentication(routeAdmin, w, r)
+		middleware.Authentication(repo.routeAdmin, w, r)
 
 	default:
 		handle404(w, r)
@@ -98,7 +111,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 }
 
 // routeBlog handles the url segment /blog
-func routeBlog(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) routeBlog(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
 	if len(url)-1 > urlIndex {
 		urlIndex++
@@ -112,58 +125,58 @@ func routeBlog(w http.ResponseWriter, r *http.Request) {
 	blogHandler.HandleBlog(w, r)
 }
 
-func routeGuestbook(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) routeGuestbook(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
 	if len(url)-1 > urlIndex {
 		urlIndex++
 		switch segment := url[urlIndex]; segment {
 		case "sign":
-			guestbookHandler.HandlePostGuestbookSignature(w, r)
+			repo.GH.HandlePostGuestbookSignature(w, r)
 		}
 	}
-	guestbookHandler.HandleGetApprovedGuestbookSignatures(w, r)
+	repo.GH.HandleGetApprovedGuestbookSignatures(w, r)
 }
 
-func routeAdmin(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) routeAdmin(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
 	if len(url)-1 > urlIndex {
 		urlIndex++
 		switch segment := url[urlIndex]; segment {
 		case "guestbook":
-			middleware.Authentication(routeAdminGuestbook, w, r)
+			middleware.Authentication(repo.routeAdminGuestbook, w, r)
 		case "blog":
-			routeAdminBlog(w, r)
+			repo.routeAdminBlog(w, r)
 		case "fitness":
-			fitnessHandler.HandlePostFitness(w, r)
+			repo.FH.HandlePostFitness(w, r)
 		}
 	}
 }
 
-func routeAdminBlog(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) routeAdminBlog(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
 	if len(url)-1 > urlIndex {
 		urlIndex++
 		switch segment := url[urlIndex]; segment {
 		case "new":
-			blogHandler.HandleNewBlog(w, r)
+			repo.BH.HandleNewBlog(w, r)
 		default:
 			//TODO: Implement a dashboard to get all blogs to edit
 		}
 	}
 }
 
-func routeAdminGuestbook(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) routeAdminGuestbook(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
 	if len(url)-1 > urlIndex {
 		urlIndex++
 		switch segment := url[urlIndex]; segment {
 		case "approve":
-			guestbookHandler.HandleApproveGuestbookSignature(w, r)
+			repo.GH.HandleApproveGuestbookSignature(w, r)
 		case "deny":
-			guestbookHandler.HandleDenyGuestbookSignature(w, r)
+			repo.GH.HandleDenyGuestbookSignature(w, r)
 		}
 	}
-	guestbookHandler.HandleGetAllGuestbookSignature(w, r)
+	repo.GH.HandleGetAllGuestbookSignature(w, r)
 }
 
 func handle404(w http.ResponseWriter, r *http.Request) {
