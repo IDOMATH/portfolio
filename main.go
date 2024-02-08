@@ -23,11 +23,6 @@ const portNumber = ":8080"
 const dbUri = "mongodb://localhost:27017"
 const mongoDbName = "portfolio"
 
-var blogHandler *handlers.BlogHandler
-var userHandler *handlers.UserHandler
-var guestbookHandler *handlers.GuestbookHandler
-var fitnessHandler *handlers.FitnessHandler
-
 var regexNumber = regexp.MustCompile(`\d`)
 
 // Start the URL at 1, because the leading slash makes entry 0 the empty string ""
@@ -119,10 +114,10 @@ func (repo *Repository) routeBlog(w http.ResponseWriter, r *http.Request) {
 		switch {
 		// This is /blog/{id}
 		case regexNumber.MatchString(segment):
-			blogHandler.HandleGetBlogById(w, r)
+			repo.BH.HandleGetBlogById(w, r)
 		}
 	}
-	blogHandler.HandleBlog(w, r)
+	repo.BH.HandleBlog(w, r)
 }
 
 func (repo *Repository) routeGuestbook(w http.ResponseWriter, r *http.Request) {
