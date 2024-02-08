@@ -25,6 +25,9 @@ func NewBlogHandler(blogStore db.BlogStore) *BlogHandler {
 func (h *BlogHandler) HandleBlog(w http.ResponseWriter, r *http.Request) {
 	c, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
+	// TODO: Why is this nil?
+	fmt.Println(h)
+	fmt.Println(h.blogStore)
 
 	blogCards, err := h.blogStore.GetBlogCards(c)
 	objects := make(map[string]interface{})
