@@ -98,7 +98,7 @@ func (repo *Repository) Route(w http.ResponseWriter, r *http.Request) {
 	case "clicked":
 		handleClicked(w, r)
 	case "admin":
-		middleware.Authentication(repo.routeAdmin, w, r)
+		middleware.Authentication(repo.routeAdmin, w, r)(w, r)
 
 	default:
 		handle404(w, r)
