@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/IDOMATH/portfolio/types"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
@@ -15,6 +16,7 @@ type UserStore interface {
 	Dropper
 
 	InsertUser(context.Context, *types.User) (*types.User, error)
+	GetUser(context.Context, string) (*types.User, error)
 }
 
 type MongoUserStore struct {
@@ -49,4 +51,13 @@ func (s *MongoUserStore) InsertUser(ctx context.Context, user *types.User) (*typ
 	}
 	user.Id = res.InsertedID.(primitive.ObjectID)
 	return user, nil
+}
+
+func (s *MongoUserStore) GetUser(ctx context.Context, username string) (*types.User, error) {
+	var user types.User
+	if err := s.collection.FindOne(ctx, bson.M{"username": username}).Decode(&user); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

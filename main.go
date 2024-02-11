@@ -52,7 +52,7 @@ func main() {
 	repo := NewRepo()
 
 	repo.BH = handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
-	repo.UH = handlers.NewUserHandler(db.NewUserStore(client, mongoDbName))
+	repo.AH = handlers.NewAuthHandler(db.NewUserStore(client, mongoDbName))
 	repo.GH = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
 	repo.FH = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 
@@ -66,7 +66,7 @@ func main() {
 type Repository struct {
 	Session map[string]string
 	BH      *handlers.BlogHandler
-	UH      *handlers.UserHandler
+	AH      *handlers.AuthHandler
 	GH      *handlers.GuestbookHandler
 	FH      *handlers.FitnessHandler
 }
@@ -92,7 +92,7 @@ func (repo *Repository) Route(w http.ResponseWriter, r *http.Request) {
 	case "guestbook":
 		repo.routeGuestbook(w, r)
 	case "user":
-		repo.UH.HandlePostUser(w, r)
+		repo.AH.HandleUserSignUp(w, r)
 	case "fitness":
 		repo.FH.HandleGetFitness(w, r)
 	case "clicked":
