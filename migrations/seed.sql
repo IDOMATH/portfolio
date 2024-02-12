@@ -14,6 +14,6 @@ CREATE TABLE fitness_recaps (
 
 CREATE TABLE auth_tokens (
     id serial PRIMARY KEY,
-    expires TIMESTAMP,
-    token VARCHAR(50)
+    expires_at TIMESTAMP,
+    token VARCHAR(64)
 );
