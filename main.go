@@ -55,6 +55,7 @@ func main() {
 	repo.AH = handlers.NewAuthHandler(db.NewUserStore(client, mongoDbName))
 	repo.GH = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
 	repo.FH = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
+	repo.SS = db.NewSessionStore(postgresDb.SQL)
 
 	// Match all requests and route them with our router
 	http.HandleFunc("/", repo.Route)
@@ -69,6 +70,7 @@ type Repository struct {
 	AH      *handlers.AuthHandler
 	GH      *handlers.GuestbookHandler
 	FH      *handlers.FitnessHandler
+	SS      *db.PostgresSessionStore
 }
 
 func NewRepo() *Repository {

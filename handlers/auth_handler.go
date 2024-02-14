@@ -96,4 +96,5 @@ func (h *AuthHandler) HandleUserLogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: add entry to session and token DB
+	h.
 }
