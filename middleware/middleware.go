@@ -1,17 +1,26 @@
 package middleware
 
 import (
+	"github.com/IDOMATH/portfolio/types"
 	"log"
 	"net/http"
 )
 
-func Authentication(next http.HandlerFunc, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func Authentication(next http.HandlerFunc, repo *types.Repository, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	// TODO: Make this actually check authentication of the user
 	log.Println("Not Authenticated")
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Something like get auth token from r.Header.Get()
-		r.Header.Get("authToken")
+		headerToken := r.Header.Get("authToken")
+		isTokenMatch, err := repo.SS.CheckSessionToken(headerToken)
+		if err != nil {
+			// TODO: Render some error page (not 401)
+			return
+		}
+		if isTokenMatch {
+			next(w, r)
+		}
 		// Then look up that token in the DB and either continue routing or render the 401 page
-		next(w, r)
+		// TODO: Render 401
 	}
 }
