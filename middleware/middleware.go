@@ -10,7 +10,6 @@ func Authentication(next http.HandlerFunc, repo *types.Repository, w http.Respon
 	// TODO: Make this actually check authentication of the user
 	log.Println("Not Authenticated")
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Something like get auth token from r.Header.Get()
 		headerToken := r.Header.Get("authToken")
 		isTokenMatch, err := repo.SS.CheckSessionToken(headerToken)
 		if err != nil {
@@ -20,7 +19,6 @@ func Authentication(next http.HandlerFunc, repo *types.Repository, w http.Respon
 		if isTokenMatch {
 			next(w, r)
 		}
-		// Then look up that token in the DB and either continue routing or render the 401 page
 		// TODO: Render 401
 	}
 }

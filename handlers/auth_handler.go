@@ -7,6 +7,7 @@ import (
 	"github.com/IDOMATH/portfolio/types"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"net/mail"
 	"time"
 )
 
@@ -38,6 +39,11 @@ func (h *AuthHandler) HandleUserSignUp(w http.ResponseWriter, r *http.Request) {
 	email := r.PostForm.Get("email")
 	// TODO: Look up some password best practices
 	password := r.PostForm.Get("password")
+
+	_, err = mail.ParseAddress(email)
+	if err != nil {
+		fmt.Println("invalid email address", err)
+	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
