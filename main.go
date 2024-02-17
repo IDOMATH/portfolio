@@ -6,6 +6,7 @@ import (
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/handlers"
 	"github.com/IDOMATH/portfolio/types"
+	"github.com/IDOMATH/portfolio/util"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -26,13 +27,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	dbHost := "localhost"
-	dbPort := "5432"
-	dbName := "portfolio"
-	dbUser := "postgres"
-	dbPass := "postgres"
-	dbSSL := "disable"
-	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", dbHost, dbPort, dbName, dbUser, dbPass, dbSSL)
+
+	dbHost := util.GetEnvValue("DBHOST", "localhost")
+	dbPort := util.GetEnvValue("DBPORT", "5432")
+	dbName := util.GetEnvValue("DBNAME", "portfolio")
+	dbUser := util.GetEnvValue("DBUSER", "postgres")
+	dbPass := util.GetEnvValue("DBPASS", "postgres")
+	dbSsl := util.GetEnvValue("DBSSL", "disable")
+
+	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", dbHost, dbPort, dbName, dbUser, dbPass, dbSsl)
 	fmt.Println("Connecting to Postgres")
 	postgresDb, err := db.ConnectSQL(connectionString)
 	if err != nil {
