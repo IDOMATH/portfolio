@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/types"
+	"github.com/IDOMATH/portfolio/util"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"net/mail"
@@ -86,6 +88,13 @@ func (h *AuthHandler) HandleUserLogIn(w http.ResponseWriter, r *http.Request) {
 	username := r.PostForm.Get("username")
 	// TODO: Look up some password best practices
 	password := r.PostForm.Get("password")
+
+	if !util.IsValidPassword(password) {
+		// TODO: Render a template with an error message
+		err = errors.New("password does not meet requirements")
+		fmt.Println(err)
+		return
+	}
 
 	user, err := h.userStore.GetUser(context.Background(), username)
 	if err != nil {
