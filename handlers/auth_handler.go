@@ -31,7 +31,7 @@ func (h *AuthHandler) HandleUserSignUp(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		// TODO: Render a template with an error message
-		fmt.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -50,7 +50,7 @@ func (h *AuthHandler) HandleUserSignUp(w http.ResponseWriter, r *http.Request) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		// TODO: Render a template with an error message
-		fmt.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *AuthHandler) HandleUserSignUp(w http.ResponseWriter, r *http.Request) {
 	insertedUser, err := h.userStore.InsertUser(context.TODO(), user)
 	if err != nil {
 		// TODO: Render a template with an error message
-		fmt.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	fmt.Println(insertedUser)
@@ -79,7 +79,7 @@ func (h *AuthHandler) HandleUserLogIn(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		// TODO: Render a template with an error message
-		fmt.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -92,13 +92,13 @@ func (h *AuthHandler) HandleUserLogIn(w http.ResponseWriter, r *http.Request) {
 	if !util.IsValidPassword(password) {
 		// TODO: Render a template with an error message
 		err = errors.New("password does not meet requirements")
-		fmt.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	user, err := h.userStore.GetUser(context.Background(), username)
 	if err != nil {
-		fmt.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -106,7 +106,7 @@ func (h *AuthHandler) HandleUserLogIn(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		// TODO: Render a template with an error message for failed login
-		fmt.Println("username or password incorrect", err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
