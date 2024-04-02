@@ -45,6 +45,9 @@ func main() {
 
 	repo := types.NewRepo()
 
+	router := http.NewServeMux()
+	router.HandleFunc("GET /", handlers.HandleHome)
+
 	repo.BH = handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 	repo.AH = handlers.NewAuthHandler(db.NewUserStore(client, mongoDbName))
 	repo.GH = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
