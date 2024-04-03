@@ -47,6 +47,7 @@ func main() {
 
 	router := http.NewServeMux()
 	router.HandleFunc("GET /", handlers.HandleHome)
+	router.HandleFunc("GET /blog/", repo.BH.HandleBlog)
 
 	repo.BH = handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 	repo.AH = handlers.NewAuthHandler(db.NewUserStore(client, mongoDbName))
