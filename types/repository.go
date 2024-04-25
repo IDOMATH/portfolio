@@ -2,11 +2,11 @@ package types
 
 import (
 	"fmt"
-	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/handlers"
 	"github.com/IDOMATH/portfolio/middleware"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/util"
+	"github.com/IDOMATH/session"
 	"io"
 	"net/http"
 	"os"
@@ -17,12 +17,11 @@ import (
 var regexNumber = regexp.MustCompile(`\d`)
 
 type Repository struct {
-	Session  map[string]string
+	Session  session.Store
 	BH       *handlers.BlogHandler
 	AH       *handlers.AuthHandler
 	GH       *handlers.GuestbookHandler
 	FH       *handlers.FitnessHandler
-	SS       *db.PostgresSessionStore
 	urlIndex int
 }
 

@@ -7,6 +7,7 @@ import (
 	"github.com/IDOMATH/portfolio/handlers"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
+	"github.com/IDOMATH/session/memorystore"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -43,6 +44,8 @@ func main() {
 	}
 	fmt.Println("Connected to Postgres")
 
+	memStore := memorystore.New()
+
 	repo := types.NewRepo()
 
 	router := http.NewServeMux()
@@ -53,7 +56,7 @@ func main() {
 	repo.AH = handlers.NewAuthHandler(db.NewUserStore(client, mongoDbName))
 	repo.GH = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
 	repo.FH = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
-	repo.SS = db.NewSessionStore(postgresDb.SQL)
+	repo.Session = memStore
 
 	// Match all requests and route them with our router
 	http.HandleFunc("/", repo.Route)
