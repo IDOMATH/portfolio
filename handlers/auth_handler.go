@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"github.com/IDOMATH/portfolio/db"
@@ -70,45 +71,49 @@ func (h *AuthHandler) HandleUserSignUp(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(insertedUser)
 }
 
-func (h *AuthHandler) HandleUserLogIn(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) HandleUserLogIn(repo *types.Repository) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method != "POST" {
-		// TODO: write a JSON error and return a status code
-		return
+		if r.Method != "POST" {
+			// TODO: write a JSON error and return a status code
+			return
+		}
+		err := r.ParseForm()
+		if err != nil {
+			// TODO: Render a template with an error message
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		// TODO: some server side validation
+
+		username := r.PostForm.Get("username")
+		// TODO: Look up some password best practices
+		password := r.PostForm.Get("password")
+
+		if !util.IsValidPassword(password) {
+			// TODO: Render a template with an error message
+			err = errors.New("password does not meet requirements")
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		user, err := h.userStore.GetUser(context.Background(), username)
+		if err != nil {
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+
+		if err != nil {
+			// TODO: Render a template with an error message for failed login
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		stringToHash := username + time.Now().String()
+		token := sha256.Sum256([]byte(stringToHash))
+		repo.Session.Insert(string(token[:]), []byte(user.Id.String()), time.Now().Add(time.Hour))
 	}
-	err := r.ParseForm()
-	if err != nil {
-		// TODO: Render a template with an error message
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	// TODO: some server side validation
-
-	username := r.PostForm.Get("username")
-	// TODO: Look up some password best practices
-	password := r.PostForm.Get("password")
-
-	if !util.IsValidPassword(password) {
-		// TODO: Render a template with an error message
-		err = errors.New("password does not meet requirements")
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	user, err := h.userStore.GetUser(context.Background(), username)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-
-	if err != nil {
-		// TODO: Render a template with an error message for failed login
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	// TODO: add entry to session and token DB
 }
