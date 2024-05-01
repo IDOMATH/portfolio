@@ -34,15 +34,15 @@ func (repo *Repository) Route(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
 	switch url[repo.urlIndex] {
 	case "":
-		handlers.HandleHome(w, r)
+		handlers.HandleHome(w, r) //This has been converted
 	case "contact":
-		handlers.HandleContact(w, r)
+		handlers.HandleContact(w, r) //This has been converted
 	case "blog":
 		repo.routeBlog(w, r)
 	case "pic":
 		HandlePic(w, r)
 	case "resume":
-		handlers.HandleGetResume(w, r)
+		handlers.HandleGetResume(w, r) //This has been converted
 	case "guestbook":
 		repo.routeGuestbook(w, r)
 	case "user":
@@ -52,7 +52,7 @@ func (repo *Repository) Route(w http.ResponseWriter, r *http.Request) {
 	case "clicked":
 		handleClicked(w, r)
 	case "admin":
-		middleware.Authentication(repo.routeAdmin, repo, w, r)(w, r)
+		middleware.Authentication(repo.routeAdmin, repo)(w, r)
 
 	default:
 		handle404(w, r)
@@ -92,7 +92,7 @@ func (repo *Repository) routeAdmin(w http.ResponseWriter, r *http.Request) {
 		repo.urlIndex++
 		switch segment := url[repo.urlIndex]; segment {
 		case "guestbook":
-			middleware.Authentication(repo.routeAdminGuestbook, repo, w, r)
+			middleware.Authentication(repo.routeAdminGuestbook, repo)
 		case "blog":
 			repo.routeAdminBlog(w, r)
 		case "fitness":
