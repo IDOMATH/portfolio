@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/handlers"
 	"github.com/IDOMATH/portfolio/types"
@@ -10,8 +13,6 @@ import (
 	"github.com/IDOMATH/session/memorystore"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"net/http"
 )
 
 const portNumber = ":8080"
@@ -49,6 +50,11 @@ func main() {
 	repo := types.NewRepo()
 
 	router := http.NewServeMux()
+	server := http.Server{
+		Addr:    portNumber,
+		Handler: router,
+	}
+
 	router.HandleFunc("GET /", handlers.HandleHome)
 	router.HandleFunc("GET /contact/", handlers.HandleContact)
 	router.HandleFunc("GET /resume/", handlers.HandleGetResume)
