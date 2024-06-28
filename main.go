@@ -71,4 +71,5 @@ func main() {
 
 	fmt.Println("Starting server on port ", portNumber)
 	http.ListenAndServe(portNumber, nil)
+	// log.Fatal(server.ListenAndServe())
 }
