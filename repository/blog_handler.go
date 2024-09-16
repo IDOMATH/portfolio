@@ -1,15 +1,16 @@
-package handlers
+package repository
 
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
-	"net/http"
-	"strings"
-	"time"
 )
 
 type BlogHandler struct {
@@ -35,7 +36,7 @@ func (h *BlogHandler) HandleBlog(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 
-		render.Template(w, r, "all-blogs.go.html", &types.TemplateData{
+		render.Template(w, r, "all-blogs.go.html", &render.TemplateData{
 			PageTitle: "All Blogs",
 			ObjectMap: objects,
 		})
@@ -61,7 +62,7 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 
 func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		render.Template(w, r, "blog-form.go.html", &types.TemplateData{PageTitle: "New Blog"})
+		render.Template(w, r, "blog-form.go.html", &render.TemplateData{PageTitle: "New Blog"})
 	}
 	if r.Method == "POST" {
 

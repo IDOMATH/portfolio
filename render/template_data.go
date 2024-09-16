@@ -1,4 +1,4 @@
-package types
+package render
 
 // TODO: make this better to house more things as we need them, like functions
 type TemplateData struct {

@@ -1,10 +1,10 @@
-package handlers
+package repository
 
 import (
-	"github.com/IDOMATH/portfolio/render"
-	"github.com/IDOMATH/portfolio/types"
-	"github.com/IDOMATH/portfolio/util"
 	"net/http"
+
+	"github.com/IDOMATH/portfolio/render"
+	"github.com/IDOMATH/portfolio/util"
 )
 
 type ContactDetails struct {
@@ -16,7 +16,7 @@ type ContactDetails struct {
 func HandleContact(w http.ResponseWriter, r *http.Request) {
 	var err error
 	if r.Method == "GET" {
-		err = render.Template(w, r, "new-blog.go.html", &types.TemplateData{PageTitle: "Contact"})
+		err = render.Template(w, r, "new-blog.go.html", &render.TemplateData{PageTitle: "Contact"})
 	}
 	if r.Method == "POST" {
 		err = PostContactForm(w, r)
@@ -41,7 +41,7 @@ func PostContactForm(w http.ResponseWriter, r *http.Request) error {
 	if !util.IsValidEmail(email) {
 		bools["submitted_successfully"] = false
 		render.Template(w, r, "contact-submitted.go.html",
-			&types.TemplateData{
+			&render.TemplateData{
 				PageTitle: "Contact",
 				BoolMap:   bools,
 			})
@@ -62,7 +62,7 @@ func PostContactForm(w http.ResponseWriter, r *http.Request) error {
 	objects["contact_details"] = contactDetails
 
 	err = render.Template(w, r, "contact-submitted.go.html",
-		&types.TemplateData{
+		&render.TemplateData{
 			PageTitle: "Contact",
 			BoolMap:   bools,
 			ObjectMap: objects,

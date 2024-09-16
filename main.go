@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"github.com/IDOMATH/portfolio/db"
-	"github.com/IDOMATH/portfolio/handlers"
-	"github.com/IDOMATH/portfolio/types"
+	"github.com/IDOMATH/portfolio/repository"
 	"github.com/IDOMATH/portfolio/util"
 	"github.com/IDOMATH/session/memorystore"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -47,7 +46,7 @@ func main() {
 
 	memStore := memorystore.New()
 
-	repo := types.NewRepo()
+	repo := repository.NewRepo()
 
 	router := http.NewServeMux()
 	server := http.Server{
@@ -55,15 +54,15 @@ func main() {
 		Handler: router,
 	}
 
-	router.HandleFunc("GET /", handlers.HandleHome)
-	router.HandleFunc("GET /contact/", handlers.HandleContact)
-	router.HandleFunc("GET /resume/", handlers.HandleGetResume)
+	router.HandleFunc("GET /", repository.HandleHome)
+	router.HandleFunc("GET /contact/", repository.HandleContact)
+	router.HandleFunc("GET /resume/", repository.HandleGetResume)
 	router.HandleFunc("GET /blog/", repo.BH.HandleBlog)
 
-	repo.BH = handlers.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
-	repo.AH = handlers.NewAuthHandler(db.NewUserStore(client, mongoDbName))
-	repo.GH = handlers.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
-	repo.FH = handlers.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
+	repo.BH = repository.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
+	repo.AH = repository.NewAuthHandler(db.NewUserStore(client, mongoDbName))
+	repo.GH = repository.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
+	repo.FH = repository.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 	repo.Session = memStore
 
 	// Match all requests and route them with our router

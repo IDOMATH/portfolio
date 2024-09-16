@@ -1,14 +1,15 @@
-package handlers
+package repository
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 type GuestbookHandler struct {
@@ -31,7 +32,7 @@ func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures(w http.ResponseW
 		return
 	}
 
-	render.Template(w, r, "guestbook.go.html", &types.TemplateData{
+	render.Template(w, r, "guestbook.go.html", &render.TemplateData{
 		PageTitle: "Guestbook",
 		ObjectMap: objects,
 	})
@@ -57,7 +58,7 @@ func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r
 		objects := make(map[string]interface{})
 		objects["signed"] = name
 
-		render.Template(w, r, "guestbook-signed-successfully.go.html", &types.TemplateData{
+		render.Template(w, r, "guestbook-signed-successfully.go.html", &render.TemplateData{
 			PageTitle: "Guestbook Signed",
 			ObjectMap: objects,
 		})
@@ -74,7 +75,7 @@ func (h *GuestbookHandler) HandleGetAllGuestbookSignature(w http.ResponseWriter,
 		return
 	}
 
-	render.Template(w, r, "guestbook-admin.go.html", &types.TemplateData{
+	render.Template(w, r, "guestbook-admin.go.html", &render.TemplateData{
 		PageTitle: "Guestbook Admin",
 		ObjectMap: objects,
 	})

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/IDOMATH/portfolio/types"
 	"html/template"
 	"log"
 	"net/http"
@@ -15,7 +14,7 @@ const templatesLocation = "./templates"
 const layoutsLocation = templatesLocation + "/layouts"
 
 // Template renders html templates for pages
-func Template(w http.ResponseWriter, r *http.Request, tmpl string, data *types.TemplateData) error {
+func Template(w http.ResponseWriter, r *http.Request, tmpl string, data *TemplateData) error {
 	var tc map[string]*template.Template
 
 	// TODO: store template cache in app for reuse.

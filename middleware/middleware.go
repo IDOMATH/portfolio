@@ -1,12 +1,13 @@
 package middleware
 
 import (
-	"github.com/IDOMATH/portfolio/types"
 	"log"
 	"net/http"
+
+	"github.com/IDOMATH/portfolio/repository"
 )
 
-func Authentication(next http.HandlerFunc, repo *types.Repository) http.HandlerFunc {
+func Authentication(next http.HandlerFunc, repo *repository.Repository) http.HandlerFunc {
 	// TODO: Make this actually check authentication of the user
 	log.Println("Not Authenticated")
 	return func(w http.ResponseWriter, r *http.Request) {

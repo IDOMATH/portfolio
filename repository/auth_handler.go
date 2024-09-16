@@ -1,17 +1,18 @@
-package handlers
+package repository
 
 import (
 	"context"
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"net/http"
+	"net/mail"
+	"time"
+
 	"github.com/IDOMATH/portfolio/db"
 	"github.com/IDOMATH/portfolio/types"
 	"github.com/IDOMATH/portfolio/util"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"net/mail"
-	"time"
 )
 
 type AuthHandler struct {
@@ -71,7 +72,7 @@ func (h *AuthHandler) HandleUserSignUp(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(insertedUser)
 }
 
-func (h *AuthHandler) HandleUserLogIn(repo *types.Repository) http.HandlerFunc {
+func (h *AuthHandler) HandleUserLogIn(repo *Repository) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		if r.Method != "POST" {

@@ -1,14 +1,15 @@
-package handlers
+package repository
 
 import (
-	"github.com/IDOMATH/portfolio/db"
-	"github.com/IDOMATH/portfolio/render"
-	"github.com/IDOMATH/portfolio/types"
-	"github.com/IDOMATH/portfolio/util"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/IDOMATH/portfolio/db"
+	"github.com/IDOMATH/portfolio/render"
+	"github.com/IDOMATH/portfolio/types"
+	"github.com/IDOMATH/portfolio/util"
 )
 
 type FitnessHandler struct {
@@ -34,7 +35,7 @@ func (h *FitnessHandler) HandleGetFitness(w http.ResponseWriter, r *http.Request
 func (h *FitnessHandler) HandlePostFitness(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		render.Template(w, r, "fitness-form.go.html",
-			&types.TemplateData{PageTitle: "Fitness"})
+			&render.TemplateData{PageTitle: "Fitness"})
 	}
 	if r.Method == "POST" {
 		// TODO: figure out how this will be input on the front end and translated here

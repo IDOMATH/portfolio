@@ -1,27 +1,27 @@
-package types
+package repository
 
 import (
 	"fmt"
-	"github.com/IDOMATH/portfolio/handlers"
-	"github.com/IDOMATH/portfolio/middleware"
-	"github.com/IDOMATH/portfolio/render"
-	"github.com/IDOMATH/portfolio/util"
-	"github.com/IDOMATH/session"
 	"io"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/IDOMATH/portfolio/middleware"
+	"github.com/IDOMATH/portfolio/render"
+	"github.com/IDOMATH/portfolio/util"
+	"github.com/IDOMATH/session"
 )
 
 var regexNumber = regexp.MustCompile(`\d`)
 
 type Repository struct {
 	Session  session.Store
-	BH       *handlers.BlogHandler
-	AH       *handlers.AuthHandler
-	GH       *handlers.GuestbookHandler
-	FH       *handlers.FitnessHandler
+	BH       *BlogHandler
+	AH       *AuthHandler
+	GH       *GuestbookHandler
+	FH       *FitnessHandler
 	urlIndex int
 }
 
@@ -34,15 +34,15 @@ func (repo *Repository) Route(w http.ResponseWriter, r *http.Request) {
 	url := strings.Split(r.URL.Path, "/")
 	switch url[repo.urlIndex] {
 	case "":
-		handlers.HandleHome(w, r) //This has been converted
+		HandleHome(w, r) //This has been converted
 	case "contact":
-		handlers.HandleContact(w, r) //This has been converted
+		HandleContact(w, r) //This has been converted
 	case "blog":
 		repo.routeBlog(w, r)
 	case "pic":
 		HandlePic(w, r)
 	case "resume":
-		handlers.HandleGetResume(w, r) //This has been converted
+		HandleGetResume(w, r) //This has been converted
 	case "guestbook":
 		repo.routeGuestbook(w, r)
 	case "user":
@@ -130,18 +130,18 @@ func (repo *Repository) routeAdminGuestbook(w http.ResponseWriter, r *http.Reque
 
 func handle404(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	render.Template(w, r, "error-404.go.html", &TemplateData{PageTitle: "Not Found"})
+	render.Template(w, r, "error-404.go.html", &render.TemplateData{PageTitle: "Not Found"})
 }
 
 func handleClicked(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "clicked.go.html", &TemplateData{})
+	render.Template(w, r, "clicked.go.html", &render.TemplateData{})
 }
 
 func HandlePic(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		err := render.Template(w, r, "upload-pic.go.html",
-			&TemplateData{PageTitle: "Pic"})
+			&render.TemplateData{PageTitle: "Pic"})
 		if err != nil {
 			util.WriteError(w, http.StatusInternalServerError, err)
 		}

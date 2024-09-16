@@ -1,14 +1,14 @@
-package handlers
+package repository
 
 import (
-	"github.com/IDOMATH/portfolio/render"
-	"github.com/IDOMATH/portfolio/types"
 	"net/http"
+
+	"github.com/IDOMATH/portfolio/render"
 )
 
 func HandleGetResume(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "resume.go.html",
-		&types.TemplateData{
+		&render.TemplateData{
 			PageTitle: "Resume",
 		})
 }
