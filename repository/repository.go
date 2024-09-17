@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/IDOMATH/portfolio/middleware"
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/util"
 	"github.com/IDOMATH/session"
@@ -52,7 +51,7 @@ func (repo *Repository) Route(w http.ResponseWriter, r *http.Request) {
 	case "clicked":
 		handleClicked(w, r)
 	case "admin":
-		middleware.Authentication(repo.routeAdmin, repo)(w, r)
+		repo.routeAdmin(w, r)
 
 	default:
 		handle404(w, r)
@@ -92,7 +91,7 @@ func (repo *Repository) routeAdmin(w http.ResponseWriter, r *http.Request) {
 		repo.urlIndex++
 		switch segment := url[repo.urlIndex]; segment {
 		case "guestbook":
-			middleware.Authentication(repo.routeAdminGuestbook, repo)
+			repo.routeAdminGuestbook(w, r)
 		case "blog":
 			repo.routeAdminBlog(w, r)
 		case "fitness":

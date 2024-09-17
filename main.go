@@ -69,6 +69,6 @@ func main() {
 	http.HandleFunc("/", repo.Route)
 
 	fmt.Println("Starting server on port ", portNumber)
-	http.ListenAndServe(portNumber, nil)
-	// log.Fatal(server.ListenAndServe())
+	// http.ListenAndServe(portNumber, nil)
+	log.Fatal(server.ListenAndServe())
 }
