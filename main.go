@@ -66,7 +66,7 @@ func main() {
 	repo.Session = memStore
 
 	// Match all requests and route them with our router
-	http.HandleFunc("/", repo.Route)
+	// http.HandleFunc("/", repo.Route)
 
 	fmt.Println("Starting server on port ", portNumber)
 	// http.ListenAndServe(portNumber, nil)
