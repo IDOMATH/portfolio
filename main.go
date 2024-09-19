@@ -55,7 +55,8 @@ func main() {
 	}
 
 	router.HandleFunc("GET /", repository.HandleHome)
-	router.HandleFunc("GET /contact/", repository.HandleContact)
+	router.HandleFunc("GET /contact/", repository.HandleGetContact)
+	router.HandleFunc("POST /conact/", repository.HandlePostContact)
 	router.HandleFunc("GET /resume/", repository.HandleGetResume)
 	router.HandleFunc("GET /blog/", repo.BH.HandleBlog)
 

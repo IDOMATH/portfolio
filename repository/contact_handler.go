@@ -13,14 +13,14 @@ type ContactDetails struct {
 	Message string `json:"message"`
 }
 
-func HandleContact(w http.ResponseWriter, r *http.Request) {
+func HandleGetContact(w http.ResponseWriter, r *http.Request) {
 	err := render.Template(w, r, "new-blog.go.html", &render.TemplateData{PageTitle: "Contact"})
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)
 	}
 }
 
-func PostContactForm(w http.ResponseWriter, r *http.Request) {
+func HandlePostContact(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)

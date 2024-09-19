@@ -2,9 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/IDOMATH/portfolio/db"
@@ -23,7 +21,7 @@ func NewBlogHandler(blogStore db.BlogStore) *BlogHandler {
 	}
 }
 
-func (h *BlogHandler) HandleBlog(w http.ResponseWriter, r *http.Request) {
+func (h *BlogHandler) HandleGetBlog(w http.ResponseWriter, r *http.Request) {
 	c, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
 
@@ -44,11 +42,7 @@ func (h *BlogHandler) HandleBlog(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) {
-	// Path to get here is	 /blog/{id}
-	// 					  [0]/[1] /[2]
-	url := strings.Split(r.URL.Path, "/")
-	fmt.Println(url)
-	id := url[2]
+	id := r.PathValue("id")
 	blog, err := h.blogStore.GetBlogById(context.Background(), id)
 	if err != nil {
 		util.WriteError(w, http.StatusInternalServerError, err)
@@ -60,6 +54,7 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 	w.Write([]byte(blog.Title))
 }
 
+// TODO: update this to use 1.22 routing
 func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		render.Template(w, r, "blog-form.go.html", &render.TemplateData{PageTitle: "New Blog"})
