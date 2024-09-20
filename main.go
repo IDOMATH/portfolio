@@ -58,12 +58,16 @@ func main() {
 	router.HandleFunc("GET /contact/", repository.HandleGetContact)
 	router.HandleFunc("POST /conact/", repository.HandlePostContact)
 	router.HandleFunc("GET /resume/", repository.HandleGetResume)
-	router.HandleFunc("GET /blog/", repo.BH.HandleBlog)
+	router.HandleFunc("GET /blog/", repo.BH.HandleGetBlog)
+	router.HandleFunc("GET /blog/{id}", repo.BH.HandleGetBlogById)
+	router.HandleFunc("GET /new-blog/", repo.BH.HandleNewBlog)
+	router.HandleFunc("POST /new-blog/", repo.BH.HandlePostNewBlog)
 
 	repo.BH = repository.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 	repo.AH = repository.NewAuthHandler(db.NewUserStore(client, mongoDbName))
 	repo.GH = repository.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
 	repo.FH = repository.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
+
 	repo.Session = memStore
 
 	// Match all requests and route them with our router

@@ -56,28 +56,26 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 
 // TODO: update this to use 1.22 routing
 func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		render.Template(w, r, "blog-form.go.html", &render.TemplateData{PageTitle: "New Blog"})
+	render.Template(w, r, "blog-form.go.html", &render.TemplateData{PageTitle: "New Blog"})
+}
+
+func (h *BlogHandler) HandlePostNewBlog(w http.ResponseWriter, r *http.Request) {
+	var blog types.BlogPost
+
+	title := r.FormValue("title")
+	// TODO: get the author from the logged in user.
+	body := r.FormValue("body")
+	imageName := r.FormValue("image")
+
+	blog.Title = title
+	blog.Body = body
+	blog.ImageName = imageName
+	blog.PublishedAt = time.Now()
+	_, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
+	if err != nil {
+		util.WriteError(w, http.StatusInternalServerError, err)
 	}
-	if r.Method == "POST" {
 
-		var blog types.BlogPost
-
-		title := r.FormValue("title")
-		// TODO: get the author from the logged in user.
-		body := r.FormValue("body")
-		imageName := r.FormValue("image")
-
-		blog.Title = title
-		blog.Body = body
-		blog.ImageName = imageName
-		blog.PublishedAt = time.Now()
-		_, err := h.blogStore.InsertBlogPost(context.Background(), &blog)
-		if err != nil {
-			util.WriteError(w, http.StatusInternalServerError, err)
-		}
-
-		// TODO: Make this actually load the page
-		http.Redirect(w, r, "/blog", http.StatusCreated)
-	}
+	// TODO: Make this actually load the page
+	http.Redirect(w, r, "/blog", http.StatusCreated)
 }
