@@ -62,6 +62,7 @@ func main() {
 	router.HandleFunc("GET /blog/{id}", repo.BH.HandleGetBlogById)
 	router.HandleFunc("GET /new-blog/", repo.BH.HandleNewBlog)
 	router.HandleFunc("POST /new-blog/", repo.BH.HandlePostNewBlog)
+	router.HandleFunc("GET /fitness/", repo.FH.HandleGetFitness)
 
 	repo.BH = repository.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 	repo.AH = repository.NewAuthHandler(db.NewUserStore(client, mongoDbName))

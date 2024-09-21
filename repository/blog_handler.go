@@ -54,7 +54,6 @@ func (h *BlogHandler) HandleGetBlogById(w http.ResponseWriter, r *http.Request) 
 	w.Write([]byte(blog.Title))
 }
 
-// TODO: update this to use 1.22 routing
 func (h *BlogHandler) HandleNewBlog(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "blog-form.go.html", &render.TemplateData{PageTitle: "New Blog"})
 }
