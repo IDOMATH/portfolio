@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"strings"
 
 	"github.com/IDOMATH/portfolio/render"
 	"github.com/IDOMATH/portfolio/util"
@@ -26,105 +25,6 @@ type Repository struct {
 
 func NewRepo() *Repository {
 	return &Repository{}
-}
-
-func (repo *Repository) Route(w http.ResponseWriter, r *http.Request) {
-	repo.urlIndex = 1
-	url := strings.Split(r.URL.Path, "/")
-	switch url[repo.urlIndex] {
-	case "":
-		HandleHome(w, r) //This has been converted
-	case "contact":
-		HandleContact(w, r) //This has been converted
-	case "blog":
-		repo.routeBlog(w, r)
-	case "pic":
-		HandlePic(w, r)
-	case "resume":
-		HandleGetResume(w, r) //This has been converted
-	case "guestbook":
-		repo.routeGuestbook(w, r)
-	case "user":
-		repo.AH.HandleUserSignUp(w, r)
-	case "fitness":
-		repo.FH.HandleGetFitness(w, r)
-	case "clicked":
-		handleClicked(w, r)
-	case "admin":
-		repo.routeAdmin(w, r)
-
-	default:
-		handle404(w, r)
-	}
-}
-
-// routeBlog handles the url segment /blog
-func (repo *Repository) routeBlog(w http.ResponseWriter, r *http.Request) {
-	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > repo.urlIndex {
-		repo.urlIndex++
-		segment := url[repo.urlIndex]
-		switch {
-		// This is /blog/{id}
-		case regexNumber.MatchString(segment):
-			repo.BH.HandleGetBlogById(w, r)
-		}
-	}
-	repo.BH.HandleBlog(w, r)
-}
-
-func (repo *Repository) routeGuestbook(w http.ResponseWriter, r *http.Request) {
-	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > repo.urlIndex {
-		repo.urlIndex++
-		switch segment := url[repo.urlIndex]; segment {
-		case "sign":
-			repo.GH.HandlePostGuestbookSignature(w, r)
-		}
-	}
-	repo.GH.HandleGetApprovedGuestbookSignatures(w, r)
-}
-
-func (repo *Repository) routeAdmin(w http.ResponseWriter, r *http.Request) {
-	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > repo.urlIndex {
-		repo.urlIndex++
-		switch segment := url[repo.urlIndex]; segment {
-		case "guestbook":
-			repo.routeAdminGuestbook(w, r)
-		case "blog":
-			repo.routeAdminBlog(w, r)
-		case "fitness":
-			repo.FH.HandlePostFitness(w, r)
-		}
-	}
-}
-
-func (repo *Repository) routeAdminBlog(w http.ResponseWriter, r *http.Request) {
-	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > repo.urlIndex {
-		repo.urlIndex++
-		switch segment := url[repo.urlIndex]; segment {
-		case "new":
-			repo.BH.HandleNewBlog(w, r)
-		default:
-			//TODO: Implement a dashboard to get all blogs to edit
-		}
-	}
-}
-
-func (repo *Repository) routeAdminGuestbook(w http.ResponseWriter, r *http.Request) {
-	url := strings.Split(r.URL.Path, "/")
-	if len(url)-1 > repo.urlIndex {
-		repo.urlIndex++
-		switch segment := url[repo.urlIndex]; segment {
-		case "approve":
-			repo.GH.HandleApproveGuestbookSignature(w, r)
-		case "deny":
-			repo.GH.HandleDenyGuestbookSignature(w, r)
-		}
-	}
-	repo.GH.HandleGetAllGuestbookSignature(w, r)
 }
 
 func handle404(w http.ResponseWriter, r *http.Request) {
