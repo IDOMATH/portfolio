@@ -22,7 +22,7 @@ func NewGuestbookHandler(guestbookStore db.PostgresGuestbookStore) *GuestbookHan
 	}
 }
 
-func (h *GuestbookHandler) HandleGetApprovedGuestbookSignatures(w http.ResponseWriter, r *http.Request) {
+func (h *GuestbookHandler) HandleGetGuestbook(w http.ResponseWriter, r *http.Request) {
 	signatures, err := h.guestbookStore.GetApprovedGuestbookSignatures()
 	objects := make(map[string]interface{})
 	objects["signatures"] = signatures
