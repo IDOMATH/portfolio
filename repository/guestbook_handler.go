@@ -39,30 +39,27 @@ func (h *GuestbookHandler) HandleGetGuestbook(w http.ResponseWriter, r *http.Req
 
 }
 
-func (h *GuestbookHandler) HandlePostGuestbookSignature(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+func (h *GuestbookHandler) HandlePostGuestbook(w http.ResponseWriter, r *http.Request) {
+	name := r.FormValue("name")
 
-		name := r.FormValue("name")
-
-		signature := types.GuestbookSignature{
-			Name:       name,
-			IsApproved: false,
-			CreatedAt:  time.Now(),
-		}
-		_, err := h.guestbookStore.InsertGuestbookSignature(signature)
-		if err != nil {
-			util.WriteError(w, http.StatusInternalServerError, err)
-			return
-		}
-
-		objects := make(map[string]interface{})
-		objects["signed"] = name
-
-		render.Template(w, r, "guestbook-signed-successfully.go.html", &render.TemplateData{
-			PageTitle: "Guestbook Signed",
-			ObjectMap: objects,
-		})
+	signature := types.GuestbookSignature{
+		Name:       name,
+		IsApproved: false,
+		CreatedAt:  time.Now(),
 	}
+	_, err := h.guestbookStore.InsertGuestbookSignature(signature)
+	if err != nil {
+		util.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	objects := make(map[string]interface{})
+	objects["signed"] = name
+
+	render.Template(w, r, "guestbook-signed-successfully.go.html", &render.TemplateData{
+		PageTitle: "Guestbook Signed",
+		ObjectMap: objects,
+	})
 }
 
 func (h *GuestbookHandler) HandleGetAllGuestbookSignature(w http.ResponseWriter, r *http.Request) {
