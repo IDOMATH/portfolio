@@ -67,6 +67,7 @@ func main() {
 	router.HandleFunc("POST /fitness-form/", repo.FH.HandlePostFitnessForm)
 	router.HandleFunc("GET /guestbook/", repo.GH.HandleGetGuestbook)
 	router.HandleFunc("POST /guestbook", repo.GH.HandlePostGuestbook)
+	router.HandleFunc("GET /admin/guestbook", repo.GH.HandleGetGuestbookAdmin)
 
 	repo.BH = repository.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 	repo.AH = repository.NewAuthHandler(db.NewUserStore(client, mongoDbName))

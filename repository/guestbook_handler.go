@@ -62,7 +62,7 @@ func (h *GuestbookHandler) HandlePostGuestbook(w http.ResponseWriter, r *http.Re
 	})
 }
 
-func (h *GuestbookHandler) HandleGetAllGuestbookSignature(w http.ResponseWriter, r *http.Request) {
+func (h *GuestbookHandler) HandleGetGuestbookAdmin(w http.ResponseWriter, r *http.Request) {
 	signatures, err := h.guestbookStore.GetAllGuestbookSignatures()
 	objects := make(map[string]interface{})
 	objects["signatures"] = signatures
