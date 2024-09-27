@@ -55,19 +55,25 @@ func main() {
 	}
 
 	router.HandleFunc("GET /", repository.HandleHome)
+
 	router.HandleFunc("GET /contact/", repository.HandleGetContact)
 	router.HandleFunc("POST /conact/", repository.HandlePostContact)
+
 	router.HandleFunc("GET /resume/", repository.HandleGetResume)
+
 	router.HandleFunc("GET /blog/", repo.BH.HandleGetBlog)
 	router.HandleFunc("GET /blog/{id}/", repo.BH.HandleGetBlogById)
 	router.HandleFunc("GET /new-blog/", repo.BH.HandleNewBlog)
 	router.HandleFunc("POST /new-blog/", repo.BH.HandlePostNewBlog)
+
 	router.HandleFunc("GET /fitness/", repo.FH.HandleGetFitness)
 	router.HandleFunc("GET /fitness-form/", repo.FH.HandleGetFitnessForm)
 	router.HandleFunc("POST /fitness-form/", repo.FH.HandlePostFitnessForm)
+
 	router.HandleFunc("GET /guestbook/", repo.GH.HandleGetGuestbook)
 	router.HandleFunc("POST /guestbook", repo.GH.HandlePostGuestbook)
 	router.HandleFunc("GET /admin/guestbook", repo.GH.HandleGetGuestbookAdmin)
+	router.HandleFunc("POST /adming/guestbook/approve", repo.GH.HandleApproveGuestbookSignature)
 
 	repo.BH = repository.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 	repo.AH = repository.NewAuthHandler(db.NewUserStore(client, mongoDbName))
