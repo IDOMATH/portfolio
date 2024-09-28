@@ -73,7 +73,8 @@ func main() {
 	router.HandleFunc("GET /guestbook/", repo.GH.HandleGetGuestbook)
 	router.HandleFunc("POST /guestbook", repo.GH.HandlePostGuestbook)
 	router.HandleFunc("GET /admin/guestbook", repo.GH.HandleGetGuestbookAdmin)
-	router.HandleFunc("POST /adming/guestbook/approve", repo.GH.HandleApproveGuestbookSignature)
+	router.HandleFunc("POST /admin/guestbook/approve", repo.GH.HandleApproveGuestbookSignature)
+	router.HandleFunc("POST /admin/guestbook/deny", repo.GH.HandleDenyGuestbookSignature)
 
 	repo.BH = repository.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 	repo.AH = repository.NewAuthHandler(db.NewUserStore(client, mongoDbName))
