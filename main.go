@@ -18,9 +18,6 @@ const portNumber = ":8080"
 const dbUri = "mongodb://localhost:27017"
 const mongoDbName = "portfolio"
 
-// Start the URL at 1, because the leading slash makes entry 0 the empty string ""
-var urlIndex = 1
-
 // main is the entry point to the application
 func main() {
 	fmt.Println("Connecting to mongo")
@@ -83,10 +80,6 @@ func main() {
 
 	repo.Session = memStore
 
-	// Match all requests and route them with our router
-	// http.HandleFunc("/", repo.Route)
-
 	fmt.Println("Starting server on port ", portNumber)
-	// http.ListenAndServe(portNumber, nil)
 	log.Fatal(server.ListenAndServe())
 }
