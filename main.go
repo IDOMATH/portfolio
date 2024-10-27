@@ -73,10 +73,7 @@ func main() {
 	router.HandleFunc("POST /admin/guestbook/approve", repo.GH.HandleApproveGuestbookSignature)
 	router.HandleFunc("POST /admin/guestbook/deny", repo.GH.HandleDenyGuestbookSignature)
 
-	repo.BH = repository.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 	repo.AH = repository.NewAuthHandler(db.NewUserStore(client, mongoDbName))
-	repo.GH = repository.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
-	repo.FH = repository.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 
 	repo.Session = memStore
 
