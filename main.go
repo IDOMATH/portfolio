@@ -44,8 +44,12 @@ func main() {
 	memStore := memorystore.New()
 
 	repo := repository.NewRepo()
+
 	repo.FH = repository.NewFitnessHandler(*db.NewPostgresFitnessStore(postgresDb.SQL))
 	repo.GH = repository.NewGuestbookHandler(*db.NewPostgresGuestbookStore(postgresDb.SQL))
+
+	repo.AH = repository.NewAuthHandler(db.NewUserStore(client, mongoDbName))
+	repo.BH = repository.NewBlogHandler(db.NewBlogStore(client, mongoDbName))
 
 	router := http.NewServeMux()
 	server := http.Server{
